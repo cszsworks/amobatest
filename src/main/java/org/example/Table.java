@@ -1,7 +1,8 @@
 package org.example;
+import org.example.exception.InvalidCellPositionException;
 
 public class Table {
-
+    private
     private final int rows;
     private final int cols;
     private final CellVO[][] cells;
@@ -23,13 +24,13 @@ public class Table {
         }
     }
 
-    public CellVO getCell(int row, int col) {
+    public CellVO getCell(int row, int col) throws InvalidCellPositionException{
         if (row < 0 || row >= rows || col < 0 || col >= cols) {
-            return null; //tablan kivül esik
+            throw new InvalidCellPositionException(row,col);
         }
         return cells[row][col];
     }
-
+    //Mar meglevö cella átállítása
     public void setCell(int row, int col, CellVO.Value newValue) {
         cells[row][col] = cells[row][col].withValue(newValue);
     }
