@@ -2,11 +2,60 @@ package org.example;
 import org.example.exception.InvalidCellPositionException;
 
 public class Table {
-
+    private CellVO.Value winState = CellVO.Value.EMPTY;
     private final int rows;
     private final int cols;
     private final CellVO[][] cells;
     private final int winLength;
+
+
+    /* ======= Win Check Logic ======= */
+
+    //inkabb void, es winstatet modosit
+    private void checkRow() {
+        CellVO.Value winner = CellVO.Value.EMPTY;
+        outer:
+        for (int i = 0; i < rows; i++) {
+            int sameCount = 0;
+            CellVO.Value checkAgainst = CellVO.Value.EMPTY;
+
+            for (int j = 0; j < cols; j++) {
+                CellVO.Value cur = cells[i][j].getValue();
+
+                if (cur == CellVO.Value.EMPTY) {  //üres cellát nem vizsgál
+                    sameCount = 0;
+                    checkAgainst = CellVO.Value.EMPTY;
+                    continue;
+                }
+
+                if (cur == checkAgainst) {
+                    sameCount++;
+                } else {
+                    checkAgainst = cur;
+                    sameCount = 1;
+                }
+
+                if (sameCount == winLength) {
+                    winner = checkAgainst;
+                    break outer;
+                }
+            }
+        }
+
+        this.winState = winner;
+    }
+
+    private CellVO.Value checkCol() {
+        return null;
+
+    }
+    private CellVO.Value checkMainDiagonal() {
+        return null;
+    }
+    private CellVO.Value checkAntiDiagonal() {
+        return null;
+    }
+    /* =============================== */
 
     public Table(int rows, int cols, int winLength) {
         this.rows = rows;
@@ -31,7 +80,11 @@ public class Table {
         return cells[row][col];
     }
     //Mar meglevö cella átállítása
-    public void setCell(int row, int col, CellVO.Value newValue) {
+    public void setCell(int row, int col, CellVO.Value newValue) throws InvalidCellPositionException{
+        if(row < 0 || row >= rows || col < 0 || col >= cols)
+        {
+            throw new InvalidCellPositionException(row,col);
+        }
         cells[row][col] = cells[row][col].withValue(newValue);
     }
 
@@ -54,6 +107,7 @@ public class Table {
 
     public CellVO.Value checkWinner()
     {
-        return null;
+        this.checkRow();
+        return this.winState;
     }
 }
