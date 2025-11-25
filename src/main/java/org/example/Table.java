@@ -2,7 +2,7 @@ package org.example;
 import org.example.exception.InvalidCellPositionException;
 
 public class Table {
-    private
+
     private final int rows;
     private final int cols;
     private final CellVO[][] cells;
