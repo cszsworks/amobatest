@@ -2,7 +2,7 @@ package org.example;
 import org.example.exception.InvalidCellPositionException;
 
 public class Table {
-    private CellVO.Value winState = CellVO.Value.EMPTY;
+    private CellVO.Value winState;
     private final int rows;
     private final int cols;
     private final CellVO[][] cells;
@@ -12,9 +12,7 @@ public class Table {
     /* ======= Win Check Logic ======= */
 
     //inkabb void, es winstatet modosit
-    private void checkRow() {
-        CellVO.Value winner = CellVO.Value.EMPTY;
-        outer:
+    private CellVO.Value checkRow() {
         for (int i = 0; i < rows; i++) {
             int sameCount = 0;
             CellVO.Value checkAgainst = CellVO.Value.EMPTY;
@@ -36,23 +34,51 @@ public class Table {
                 }
 
                 if (sameCount == winLength) {
-                    winner = checkAgainst;
-                    break outer;
+                    return checkAgainst;
+                }
+            }
+        }
+        return CellVO.Value.EMPTY;
+    }
+
+
+
+    private CellVO.Value checkCol() {
+
+        for (int i = 0; i < cols; i++) {
+            int sameCount = 0;
+            CellVO.Value checkAgainst = CellVO.Value.EMPTY;
+
+            for (int j = 0; j < rows; j++) {
+                CellVO.Value cur = cells[i][j].getValue();
+
+                if (cur == CellVO.Value.EMPTY) {  //üres cellát nem vizsgál
+                    sameCount = 0;
+                    checkAgainst = CellVO.Value.EMPTY;
+                    continue;
+                }
+
+                if (cur == checkAgainst) {
+                    sameCount++;
+                } else {
+                    checkAgainst = cur;
+                    sameCount = 1;
+                }
+
+                if (sameCount == winLength) {
+                    return checkAgainst;
                 }
             }
         }
 
-        this.winState = winner;
-    }
-
-    private CellVO.Value checkCol() {
-        return null;
+        return CellVO.Value.EMPTY;
 
     }
-    private CellVO.Value checkMainDiagonal() {
+    private CellVO.Value checkSEDiagonal() {
+
         return null;
     }
-    private CellVO.Value checkAntiDiagonal() {
+    private CellVO.Value checkSWDiagonal() {
         return null;
     }
     /* =============================== */
@@ -60,6 +86,7 @@ public class Table {
     public Table(int rows, int cols, int winLength) {
         this.rows = rows;
         this.cols = cols;
+        this.winState = CellVO.Value.EMPTY;
         this.cells = new CellVO[rows][cols];
         this.winLength = winLength;
         initializeCells();
@@ -107,7 +134,18 @@ public class Table {
 
     public CellVO.Value checkWinner()
     {
-        this.checkRow();
-        return this.winState;
+        CellVO.Value w = CellVO.Value.EMPTY;
+
+        w = checkRow();
+        if (w != CellVO.Value.EMPTY) return w;
+
+        w = checkCol();
+        if (w != CellVO.Value.EMPTY) return w;
+
+        w = checkSEDiagonal();
+        if (w != CellVO.Value.EMPTY) return w;
+
+        w = checkSWDiagonal();
+        return w;
     }
 }
