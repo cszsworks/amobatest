@@ -12,14 +12,15 @@ public class Table {
     /* ======= Win Check Logic ======= */
 
     private CellVO.Value checkRow() {
-        for (int i = 0; i < cols; i++) {
+        for (int i = 0; i < rows; i++) {
             int sameCount = 0;
             CellVO.Value checkAgainst = CellVO.Value.EMPTY;
 
-            for (int j = 0; j < rows; j++) {
-                CellVO.Value cur = cells[j][i].getValue();
 
-                if (cur == CellVO.Value.EMPTY) {  //üres cellát nem vizsgál
+            for (int j = 0; j < cols; j++) {
+                CellVO.Value cur = cells[i][j].getValue();
+
+                if (cur == CellVO.Value.EMPTY) {  // skip empty cells
                     sameCount = 0;
                     checkAgainst = CellVO.Value.EMPTY;
                     continue;
@@ -33,11 +34,12 @@ public class Table {
                 }
 
                 if (sameCount == winLength) {
-                    return checkAgainst;
+                    return checkAgainst;  // winner found
                 }
             }
         }
-        return CellVO.Value.EMPTY;
+
+        return CellVO.Value.EMPTY;  // no winner in any row
     }
 
 
