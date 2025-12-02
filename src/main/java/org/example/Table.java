@@ -11,14 +11,13 @@ public class Table {
 
     /* ======= Win Check Logic ======= */
 
-    //inkabb void, es winstatet modosit
     private CellVO.Value checkRow() {
-        for (int i = 0; i < rows; i++) {
+        for (int i = 0; i < cols; i++) {
             int sameCount = 0;
             CellVO.Value checkAgainst = CellVO.Value.EMPTY;
 
-            for (int j = 0; j < cols; j++) {
-                CellVO.Value cur = cells[i][j].getValue();
+            for (int j = 0; j < rows; j++) {
+                CellVO.Value cur = cells[j][i].getValue();
 
                 if (cur == CellVO.Value.EMPTY) {  //üres cellát nem vizsgál
                     sameCount = 0;
@@ -74,12 +73,76 @@ public class Table {
         return CellVO.Value.EMPTY;
 
     }
-    private CellVO.Value checkSEDiagonal() {
 
-        return null;
+    private CellVO.Value checkSEDiagonal() {
+        int size = rows;
+        for (int rowStart = 0; rowStart <= size - winLength; rowStart++) {
+            for (int colStart = 0; colStart <= size - winLength; colStart++) {
+
+                int sameCount = 0;
+                CellVO.Value checkAgainst = CellVO.Value.EMPTY;
+
+                for (int k = 0; k < winLength; k++) {
+                    CellVO.Value cur = cells[rowStart + k][colStart + k].getValue();
+
+                    if (cur == CellVO.Value.EMPTY) {
+                        sameCount = 0;
+                        checkAgainst = CellVO.Value.EMPTY;
+                        break; // nem nyerhet
+                    }
+
+                    if (cur == checkAgainst) {
+                        sameCount++;
+                    } else {
+                        checkAgainst = cur;
+                        sameCount = 1;
+                    }
+
+                    if (sameCount == winLength) {
+                        return checkAgainst;
+                    }
+                }
+            }
+        }
+
+        return CellVO.Value.EMPTY;
     }
+
+
     private CellVO.Value checkSWDiagonal() {
-        return null;
+        int size = rows;
+
+
+        for (int rowStart = 0; rowStart <= size - winLength; rowStart++) {
+            for (int colStart = winLength - 1; colStart < size; colStart++) {
+
+                int sameCount = 0;
+                CellVO.Value checkAgainst = CellVO.Value.EMPTY;
+
+                for (int k = 0; k < winLength; k++) {
+                    CellVO.Value cur = cells[rowStart + k][colStart - k].getValue();
+
+                    if (cur == CellVO.Value.EMPTY) {
+                        sameCount = 0;
+                        checkAgainst = CellVO.Value.EMPTY;
+                        break; //nem nyerhet
+                    }
+
+                    if (cur == checkAgainst) {
+                        sameCount++;
+                    } else {
+                        checkAgainst = cur;
+                        sameCount = 1;
+                    }
+
+                    if (sameCount == winLength) {
+                        return checkAgainst;
+                    }
+                }
+            }
+        }
+
+        return CellVO.Value.EMPTY;
     }
     /* =============================== */
 
