@@ -4,8 +4,14 @@ public class Game {
 
     public static void main(String[] args) {
         System.out.println("Hello Amőba");
-        Table table = new Table(3,4,5 );
-        System.out.println(table.getCell(1,3));
-        System.out.println(table.getCell(5,6));
+        Table table = new Table(4,4,3 );
+        table.printTable();
+        System.out.println("modositom:");
+        table.setCell(2,1,CellVO.Value.O);
+        table.setCell(2,2,CellVO.Value.O);
+        table.setCell(2,3,CellVO.Value.O);
+        table.printTable();
+        System.out.println("A nyertes jel:" + table.checkWinner());
+
     }
 }
