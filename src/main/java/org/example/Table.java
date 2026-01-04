@@ -9,8 +9,10 @@ public class Table {
     private final int winLength;
 
 
-    /* ======= Win Check Logic ======= */
+    //                NYERTESKERESÉS              //
 
+
+        //sorcsekk
     private CellVO.Value checkRow() {
         for (int i = 0; i < rows; i++) {
             int sameCount = 0;
@@ -43,7 +45,7 @@ public class Table {
     }
 
 
-
+        //oszlopcsekk
     private CellVO.Value checkCol() {
 
         for (int i = 0; i < cols; i++) {
@@ -76,6 +78,8 @@ public class Table {
 
     }
 
+
+            //delkelet atlo csekk
     private CellVO.Value checkSEDiagonal() {
         int size = rows;
         for (int rowStart = 0; rowStart <= size - winLength; rowStart++) {
@@ -110,7 +114,7 @@ public class Table {
         return CellVO.Value.EMPTY;
     }
 
-
+            //delnyugat atlo csekk
     private CellVO.Value checkSWDiagonal() {
         int size = rows;
 
@@ -146,7 +150,7 @@ public class Table {
 
         return CellVO.Value.EMPTY;
     }
-    /* =============================== */
+    // =============================== //
 
     public Table(int rows, int cols, int winLength) {
         this.rows = rows;
