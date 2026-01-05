@@ -1,4 +1,4 @@
-package org.example;
+package com.cszsworks.model;
 
 import java.util.Objects;
 

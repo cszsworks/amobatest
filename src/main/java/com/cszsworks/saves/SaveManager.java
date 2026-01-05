@@ -1,4 +1,6 @@
-package org.example;
+package com.cszsworks.saves;
+
+import com.cszsworks.model.Table;
 
 public class SaveManager {
     private Table table;

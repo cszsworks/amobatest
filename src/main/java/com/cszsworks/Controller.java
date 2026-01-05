@@ -1,8 +1,7 @@
-package org.example;
+package com.cszsworks;
 
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import com.cszsworks.model.CellVO;
+import com.cszsworks.model.Table;
 
 public class Controller {
     private final Table table;

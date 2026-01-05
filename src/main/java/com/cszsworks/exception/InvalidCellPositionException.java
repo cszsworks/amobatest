@@ -1,4 +1,4 @@
-package org.example.exception;
+package com.cszsworks.exception;
 
 public class InvalidCellPositionException extends RuntimeException {
     public InvalidCellPositionException(int row, int col) {

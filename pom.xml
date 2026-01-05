@@ -59,7 +59,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>org.example.Game</mainClass>
+              <mainClass>com.cszsworks.Game</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -75,7 +75,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.example.Game</mainClass>
+              <mainClass>com.cszsworks.Game</mainClass>
             </manifest>
           </archive>
         </configuration>

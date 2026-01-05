@@ -1,5 +1,5 @@
-package org.example;
-import org.example.exception.InvalidCellPositionException;
+package com.cszsworks.model;
+import com.cszsworks.exception.InvalidCellPositionException;
 
 public class Table {
     private CellVO.Value winState;
@@ -201,6 +201,20 @@ public class Table {
         return cols;
     }
 
+    //ha tele, sehol nem empty ->true
+    public boolean isBoardFull(){
+        for (int i = 0; i<rows; i++)
+        {
+            for (int j = 0; j<cols; j++)
+            {
+                if(cells[i][j].getValue() == CellVO.Value.EMPTY)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     public CellVO.Value checkWinner()
     {
         CellVO.Value w = CellVO.Value.EMPTY;
