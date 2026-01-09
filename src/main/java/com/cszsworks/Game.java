@@ -1,28 +1,31 @@
 package com.cszsworks;
 
-import com.cszsworks.model.CellVO;
 import com.cszsworks.model.Table;
-import com.cszsworks.Controller;
-import com.cszsworks.view.Renderer;
+import com.cszsworks.view.LanternaRenderer;
+
+import javax.swing.*;
 
 public class Game {
 
     public static void main(String[] args) {
         System.out.println("Hello Amőba");
-        Table table = new Table(5,5,2 );
-        table.setCell(1,1, CellVO.Value.X);
-        table.setCell(1,0,CellVO.Value.X);
-        table.setCell(0,0, CellVO.Value.X);
-        table.setCell(0,1,CellVO.Value.X);
-        Renderer renderer = new Renderer();
+        Table table = new Table(8,4,10 );
+        LanternaRenderer renderer = null;
+        try
+        {
+            renderer = new LanternaRenderer();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         Controller testControl = new Controller(table,renderer);
 
-        testControl.callTableDraw();
-        testControl.aiMove();
-        testControl.aiMove();
-        testControl.aiMove();
-        testControl.aiMove();
-        testControl.callTableDraw();
+        try
+        {
+            testControl.gameLoop();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
 
 
     }
