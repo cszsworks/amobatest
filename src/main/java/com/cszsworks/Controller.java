@@ -21,7 +21,7 @@ public class Controller {
        this.renderer = renderer;
     }
 
-    //összes lehetséges lepes arrayList, ezt shuffle, majd rendezetten vegignezve a listat
+    //összes lehetséges lepes arrayből arrayList (tuple szeru), ezt shuffle, majd rendezetten vegignezi a listat
     public boolean aiMove ()
     {
         if(this.table.isBoardFull())
@@ -30,7 +30,7 @@ public class Controller {
         }
         List<int[]> positions = new ArrayList<>();
 
-        // collect all board positions
+        // egy int tombokbol allo listahoz hozzadja az osszes lehetosege
         for (int i = 0; i < table.getRows(); i++) {
             for (int j = 0; j < table.getCols(); j++) {
                 positions.add(new int[]{i, j});

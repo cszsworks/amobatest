@@ -9,7 +9,7 @@ public class Game {
 
     public static void main(String[] args) {
         System.out.println("Hello Amőba");
-        Table table = new Table(10,10,2 );
+        Table table = new Table(5,5,2 );
         table.setCell(1,1, CellVO.Value.X);
         table.setCell(1,0,CellVO.Value.X);
         table.setCell(0,0, CellVO.Value.X);
@@ -23,10 +23,7 @@ public class Game {
         testControl.aiMove();
         testControl.aiMove();
         testControl.callTableDraw();
-        testControl.aiMove();
-        testControl.aiMove();
-        testControl.aiMove();
-        testControl.callTableDraw();
+
 
     }
 }
