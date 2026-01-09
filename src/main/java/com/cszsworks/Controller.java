@@ -6,7 +6,7 @@ import com.cszsworks.view.LanternaRenderer;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
-import java.io.Console;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
