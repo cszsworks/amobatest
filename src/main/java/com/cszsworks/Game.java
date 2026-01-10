@@ -9,7 +9,7 @@ public class Game {
 
     public static void main(String[] args) {
         System.out.println("Hello Amőba");
-        Table table = new Table(8,4,10 );
+        Table table = new Table(4,4,6 );
         LanternaRenderer renderer = null;
         try
         {

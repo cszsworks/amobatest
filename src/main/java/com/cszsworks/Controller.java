@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
+
 public class Controller {
 
     private final Table table;
@@ -24,38 +26,57 @@ public class Controller {
         this.renderer = renderer;
     }
 
+    //segédmethod, enter inputra várás
+    private void waitForEnter() throws Exception {
+        while (true) {
+            KeyStroke key = renderer.getScreen().readInput();
+            if (key == null) continue;
+
+            if (key.getKeyType() == KeyType.Enter) {
+                return;
+            }
+
+            if (key.getKeyType() == KeyType.Escape) {
+                renderer.close();
+                System.exit(0);
+            }
+        }
+    }
+
 
     public void gameLoop() throws Exception {
-        while (true) {
-            // Render the table with current cursor
-            renderer.render(table, cursorRow, cursorCol);
+        GameState state = GameState.PLAYING;
 
-            // Check winner
+        while (state == GameState.PLAYING) {
+
+            renderer.renderGame(state, table, cursorRow, cursorCol);
+
             CellVO.Value winner = table.checkWinner();
-            if (winner != CellVO.Value.EMPTY) {
-                System.out.println("Winner: " + winner);
+            if (winner == CellVO.Value.X) {
+                state = GameState.X_WINS;
+            } else if (winner == CellVO.Value.O) {
+                state = GameState.O_WINS;
+            } else if (table.isBoardFull()) {
+                state = GameState.DRAW;
+            }
+
+            if (state != GameState.PLAYING) {
                 break;
             }
 
-            // Check draw
-            if (table.isBoardFull()) {
-                System.out.println("Draw!");
-                break;
-            }
-
-            if(playerTurn) handlePlayerInput();
-            else{
-                if(aiMove()==false) //csak akkor false a return ha tele a table
-                {
-                    System.out.println("Döntetlen!");
+            if (playerTurn) {
+                handlePlayerInput();
+            } else {
+                if (!aiMove()) {
+                    state = GameState.DRAW;
                     break;
-                };
+                }
             }
-
-
         }
 
-        // Cleanup screen after game ends
+        renderer.renderGame(state, table, cursorRow, cursorCol);
+
+        waitForEnter();
         renderer.close();
     }
 
@@ -65,6 +86,7 @@ public class Controller {
         if (key == null) return;
 
         KeyType type = key.getKeyType();
+        //lanterna billentyü input, WASD és kurzormozgatóval is irányítható
         switch (type) {
             case ArrowUp -> cursorRow = Math.max(0, cursorRow - 1);
             case ArrowDown -> cursorRow = Math.min(table.getRows() - 1, cursorRow + 1);
