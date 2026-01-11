@@ -46,37 +46,35 @@ public class Table {
 
 
         //oszlopcsekk
-    private CellVO.Value checkCol() {
+        private CellVO.Value checkCol() {
+            for (int col = 0; col < cols; col++) {
+                int sameCount = 0;
+                CellVO.Value checkAgainst = CellVO.Value.EMPTY;
 
-        for (int i = 0; i < cols; i++) {
-            int sameCount = 0;
-            CellVO.Value checkAgainst = CellVO.Value.EMPTY;
+                for (int row = 0; row < rows; row++) {
+                    CellVO.Value cur = cells[row][col].getValue(); // row first, col second
 
-            for (int j = 0; j < rows; j++) {
-                CellVO.Value cur = cells[i][j].getValue();
+                    if (cur == CellVO.Value.EMPTY) {
+                        sameCount = 0;
+                        checkAgainst = CellVO.Value.EMPTY;
+                        continue;
+                    }
 
-                if (cur == CellVO.Value.EMPTY) {  //üres cellát nem vizsgál
-                    sameCount = 0;
-                    checkAgainst = CellVO.Value.EMPTY;
-                    continue;
-                }
+                    if (cur == checkAgainst) {
+                        sameCount++;
+                    } else {
+                        checkAgainst = cur;
+                        sameCount = 1;
+                    }
 
-                if (cur == checkAgainst) {
-                    sameCount++;
-                } else {
-                    checkAgainst = cur;
-                    sameCount = 1;
-                }
-
-                if (sameCount == winLength) {
-                    return checkAgainst;
+                    if (sameCount == winLength) {
+                        return checkAgainst;
+                    }
                 }
             }
+
+            return CellVO.Value.EMPTY;
         }
-
-        return CellVO.Value.EMPTY;
-
-    }
 
 
             //delkelet atlo csekk
