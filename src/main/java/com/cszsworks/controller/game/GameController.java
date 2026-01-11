@@ -1,6 +1,6 @@
 package com.cszsworks.controller.game;
 
-import com.cszsworks.GameState;
+import com.cszsworks.model.GameState;
 import com.cszsworks.model.CellVO;
 import com.cszsworks.model.Table;
 import com.cszsworks.view.LanternaRenderer;

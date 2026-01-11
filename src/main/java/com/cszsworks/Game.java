@@ -8,7 +8,7 @@ public class Game {
 
     public static void main(String[] args) {
         System.out.println("Hello Amőba");
-        Table table = new Table(10,10,4 );
+        Table table = new Table(3,3,2 );
         LanternaRenderer renderer = null;
         try
         {
