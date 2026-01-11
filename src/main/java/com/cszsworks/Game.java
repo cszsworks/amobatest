@@ -1,15 +1,14 @@
 package com.cszsworks;
 
+import com.cszsworks.controller.game.GameController;
 import com.cszsworks.model.Table;
 import com.cszsworks.view.LanternaRenderer;
-
-import javax.swing.*;
 
 public class Game {
 
     public static void main(String[] args) {
         System.out.println("Hello Amőba");
-        Table table = new Table(4,4,6 );
+        Table table = new Table(10,10,4 );
         LanternaRenderer renderer = null;
         try
         {
@@ -17,7 +16,7 @@ public class Game {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        Controller testControl = new Controller(table,renderer);
+        GameController testControl = new GameController(table,renderer);
 
         try
         {

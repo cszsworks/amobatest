@@ -1,5 +1,6 @@
-package com.cszsworks;
+package com.cszsworks.controller.game;
 
+import com.cszsworks.GameState;
 import com.cszsworks.model.CellVO;
 import com.cszsworks.model.Table;
 import com.cszsworks.view.LanternaRenderer;
@@ -13,7 +14,7 @@ import java.util.List;
 
 
 
-public class Controller {
+public class GameController {
 
     private final Table table;
     private final LanternaRenderer renderer;
@@ -21,7 +22,7 @@ public class Controller {
     private int cursorRow = 0;
     private int cursorCol = 0;
 
-    public Controller(Table table, LanternaRenderer renderer) {
+    public GameController(Table table, LanternaRenderer renderer) {
         this.table = table;
         this.renderer = renderer;
     }
