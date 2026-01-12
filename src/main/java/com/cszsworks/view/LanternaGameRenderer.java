@@ -8,43 +8,19 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
-import com.googlecode.lanterna.terminal.swing.SwingTerminal;
-import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
-import com.googlecode.lanterna.terminal.swing.TerminalEmulatorColorConfiguration;
-import com.googlecode.lanterna.terminal.swing.TerminalEmulatorDeviceConfiguration;
+import com.googlecode.lanterna.terminal.swing.*;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class LanternaGameRenderer {
 
     private final Screen screen;
 
     // swing alapú terminál ablak létrehozáse
-    public LanternaGameRenderer() throws Exception {
+    public LanternaGameRenderer(Screen screen) throws Exception {
+        this.screen = screen;
 
-        //default beállítások amik a lanterna swing terminal constructorhoz szükségesek
-        TerminalEmulatorDeviceConfiguration deviceConfig = new TerminalEmulatorDeviceConfiguration();
-        SwingTerminalFontConfiguration fontConfig = SwingTerminalFontConfiguration.getDefault();
-        TerminalEmulatorColorConfiguration colorConfig = TerminalEmulatorColorConfiguration.getDefault();
-
-        SwingTerminal terminal = new SwingTerminal(deviceConfig, fontConfig, colorConfig);
-
-        // Jframe java konténerbe
-        JFrame frame = new JFrame("Amőba");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(terminal);             // hozzáad
-        frame.pack();                     // prekalkulál
-        frame.setLocationRelativeTo(null);// centerez
-        frame.setVisible(true);           // létrehoz
-
-        terminal.requestFocusInWindow(); // a terminál kéri az OS input focust
-
-        // most a lanterna terminal körülveszi
-        screen = new TerminalScreen(terminal);
-
-        // Elindítja a kombinaciot
-        screen.startScreen();
-        screen.setCursorPosition(null);
     }
 
 
