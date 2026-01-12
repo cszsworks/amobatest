@@ -1,4 +1,4 @@
-package com.cszsworks.model;
+package com.cszsworks.controller.game;
 
 public enum GameState {
         PLAYING,
