@@ -1,9 +1,8 @@
 package com.cszsworks.controller.game;
 
-import com.cszsworks.GameState;
 import com.cszsworks.model.CellVO;
 import com.cszsworks.model.Table;
-import com.cszsworks.view.LanternaRenderer;
+import com.cszsworks.view.LanternaGameRenderer;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
@@ -17,12 +16,12 @@ import java.util.List;
 public class GameController {
 
     private final Table table;
-    private final LanternaRenderer renderer;
+    private final LanternaGameRenderer renderer;
     private boolean playerTurn = true;
     private int cursorRow = 0;
     private int cursorCol = 0;
 
-    public GameController(Table table, LanternaRenderer renderer) {
+    public GameController(Table table, LanternaGameRenderer renderer) {
         this.table = table;
         this.renderer = renderer;
     }
@@ -38,8 +37,7 @@ public class GameController {
             }
 
             if (key.getKeyType() == KeyType.Escape) {
-                renderer.close();
-                System.exit(0);
+                return; // ekkor kilép nem vár tovább
             }
         }
     }
