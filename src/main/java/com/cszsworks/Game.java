@@ -2,6 +2,7 @@ package com.cszsworks;
 
 import com.cszsworks.controller.game.GameController;
 import com.cszsworks.controller.menu.AppState;
+import com.cszsworks.controller.menu.MenuController;
 import com.cszsworks.model.Table;
 import com.cszsworks.view.LanternaGameRenderer;
 import com.cszsworks.view.LanternaMenuRenderer;
@@ -55,19 +56,28 @@ public class Game {
             throw new RuntimeException(e);
         }
 
-
-
-
-        System.out.println("Hello Amőba");
         Table table = new Table(3, 3, 2);
-        GameController testControl = new GameController(table, gameRenderer);
+        GameController controlGame = new GameController(table, gameRenderer);
+        MenuController controlMenu = new MenuController(menuSelection,menuRenderer);
+
+
+
+//        System.out.println("Hello Amőba");
+//        Table table = new Table(3, 3, 2);
+//        GameController testControl = new GameController(table, gameRenderer);
+//
+//        try {
+//            controlGame.gameLoop();
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+
 
         try {
-            testControl.gameLoop();
+            controlMenu.startMenu();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
 
     }
 }
