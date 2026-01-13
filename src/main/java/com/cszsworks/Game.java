@@ -72,12 +72,37 @@ public class Game {
 //            throw new RuntimeException(e);
 //        }
 
+        while(appState != AppState.EXIT)
+        {
+            if(appState == AppState.MAIN_MENU)
+            {
+                try {
+                    appState = controlMenu.startMainMenu();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            else if(appState == AppState.IN_GAME)
+            {
+                try {
+                    controlGame.gameLoop();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
-        try {
-            controlMenu.startMenu();
-        } catch (Exception e) {
+
+        }
+        try{
+            mainScreen.close();
+            terminal.close();
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        System.exit(0);
+
+
+
 
     }
 }

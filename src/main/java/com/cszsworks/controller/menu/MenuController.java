@@ -1,6 +1,5 @@
 package com.cszsworks.controller.menu;
 
-import com.cszsworks.view.LanternaGameRenderer;
 import com.cszsworks.view.LanternaMenuRenderer;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -29,14 +28,13 @@ public class MenuController {
 
     private void decrementMenu()
     {
-        int limit = options.length;
         if(menuSelection >=1)
         {
             menuSelection--;
         }
     }
 
-    public AppState startMenu()
+    public AppState startMainMenu()
     {
         while(appState==AppState.MAIN_MENU)
         {
@@ -62,13 +60,20 @@ public class MenuController {
             case ArrowDown -> incrementMenu();
             case Enter ->
             {
-                {}
-
+                switch (menuSelection)
+                {
+                    case 0 -> appState = AppState.IN_GAME;
+//                    case 1 -> appState = AppState.LOAD_SCREEN;
+//                    case 2 -> appState = AppState.HIGH_SCORE_SCREEN;
+                    case 3 -> appState = AppState.EXIT;
+                }
             }
             case Escape -> {
                 renderer.close();
                 System.exit(0);
             }
+
+
             default -> {}
         }
     }
