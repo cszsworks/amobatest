@@ -1,5 +1,6 @@
 package com.cszsworks.controller.game;
 
+import com.cszsworks.controller.menu.AppState;
 import com.cszsworks.model.CellVO;
 import com.cszsworks.model.Table;
 import com.cszsworks.view.LanternaGameRenderer;
@@ -43,9 +44,9 @@ public class GameController {
     }
 
 
-    public void gameLoop() throws Exception {
+    public AppState gameLoop() throws Exception {
         GameState state = GameState.PLAYING;
-
+        AppState appState = AppState.IN_GAME;
         while (state == GameState.PLAYING) {
 
             renderer.renderGame(state, table, cursorRow, cursorCol);
@@ -60,6 +61,7 @@ public class GameController {
             }
 
             if (state != GameState.PLAYING) {
+                appState = AppState.MAIN_MENU;
                 break;
             }
 
@@ -76,7 +78,8 @@ public class GameController {
         renderer.renderGame(state, table, cursorRow, cursorCol);
 
         waitForEnter();
-        renderer.close();
+        System.out.println("enter pushed, returning : " + appState.toString() );
+        return appState;
     }
 
     private void handlePlayerInput() throws Exception {

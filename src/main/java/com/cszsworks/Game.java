@@ -56,26 +56,18 @@ public class Game {
             throw new RuntimeException(e);
         }
 
-        Table table = new Table(3, 3, 2);
-        GameController controlGame = new GameController(table, gameRenderer);
-        MenuController controlMenu = new MenuController(menuSelection,menuRenderer);
 
 
 
-//        System.out.println("Hello Amőba");
-//        Table table = new Table(3, 3, 2);
-//        GameController testControl = new GameController(table, gameRenderer);
-//
-//        try {
-//            controlGame.gameLoop();
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
+
+
+
 
         while(appState != AppState.EXIT)
         {
             if(appState == AppState.MAIN_MENU)
             {
+                MenuController controlMenu = new MenuController(menuSelection,menuRenderer);
                 try {
                     appState = controlMenu.startMainMenu();
                 } catch (Exception e) {
@@ -84,15 +76,20 @@ public class Game {
             }
             else if(appState == AppState.IN_GAME)
             {
+                Table table = new Table(5, 5, 4);
+                GameController controlGame = new GameController(table, gameRenderer);
                 try {
-                    controlGame.gameLoop();
+                    System.out.println("most ingame");
+                    appState = controlGame.gameLoop();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
-
+            System.out.println("menu egyszer lefut");
 
         }
+
+        System.out.println("loop elhagyva");
         try{
             mainScreen.close();
             terminal.close();
