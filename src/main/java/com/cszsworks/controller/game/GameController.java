@@ -94,6 +94,7 @@ public class GameController {
             case ArrowDown -> cursorRow = Math.min(table.getRows() - 1, cursorRow + 1);
             case ArrowLeft -> cursorCol = Math.max(0, cursorCol - 1);
             case ArrowRight -> cursorCol = Math.min(table.getCols() - 1, cursorCol + 1);
+//            case F5 -> createSave();
             case Character -> {
                 char c = key.getCharacter();
                 if (c == 'w') cursorRow = Math.max(0, cursorRow - 1);
