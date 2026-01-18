@@ -14,6 +14,10 @@ public class LanternaMenuRenderer {
     }
 
     public void renderMenu(String[] options, int selectedIndex) throws Exception {
+        TerminalSize newSize = screen.doResizeIfNecessary();
+        if (newSize != null) {
+            screen.clear(); //reagálunk az újreméretezésre
+        }
         screen.clear();
         TextGraphics g = screen.newTextGraphics();
 

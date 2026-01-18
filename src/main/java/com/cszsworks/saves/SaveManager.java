@@ -14,9 +14,17 @@ public class SaveManager {
     }
 
     public static GameSaveData loadSave(String filename) {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+        File file = new File(filename);
+
+        if (!file.exists()) {
+            System.out.println("Save file not found: " + filename);
+            return null; // indicate that there’s nothing to load
+        }
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             return (GameSaveData) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Failed to load save: " + filename);
             e.printStackTrace();
             return null;
         }

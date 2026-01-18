@@ -26,6 +26,11 @@ public class LanternaGameRenderer {
 
     //lanterna renderTable, bemenet table, cursor sor és oszlop poz paraméterekkel
     public void renderTable(Table table, int cursorRow, int cursorCol) {
+        TerminalSize newSize = screen.doResizeIfNecessary();
+        if (newSize != null) {
+            screen.clear(); //reagálunk az újreméretezésre
+        }
+
         screen.clear();
         TextGraphics g = screen.newTextGraphics();
 

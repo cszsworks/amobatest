@@ -20,7 +20,7 @@ public class MenuController {
     private void incrementMenu()
     {
         int limit = options.length;
-        if(menuSelection < options.length-1)
+        if(menuSelection < limit-1)
         {
             menuSelection++;
         }
@@ -63,7 +63,7 @@ public class MenuController {
                 switch (menuSelection)
                 {
                     case 0 -> appState = AppState.IN_GAME;
-//                    case 1 -> appState = AppState.LOAD_SCREEN;
+                    case 1 -> appState = AppState.LOAD_GAME;
 //                    case 2 -> appState = AppState.HIGH_SCORE_SCREEN;
                     case 3 -> appState = AppState.EXIT;
                 }
