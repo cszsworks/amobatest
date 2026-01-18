@@ -1,13 +1,32 @@
 package com.cszsworks.saves;
 
-import com.cszsworks.model.Table;
+import java.io.*;
 
 public class SaveManager {
-    private Table table;
 
-    public SaveManager(Table table)
-    {
-        this.table = table;
+    public static void createSave(GameSaveData save, String filename) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(save);
+            System.out.println("Game saved to " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
+    public static GameSaveData loadSave(String filename) {
+        File file = new File(filename);
+
+        if (!file.exists()) {
+            System.out.println("Save file not found: " + filename);
+            return null; // indicate that there’s nothing to load
+        }
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            return (GameSaveData) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Failed to load save: " + filename);
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

@@ -26,6 +26,11 @@ public class LanternaGameRenderer {
 
     //lanterna renderTable, bemenet table, cursor sor és oszlop poz paraméterekkel
     public void renderTable(Table table, int cursorRow, int cursorCol) {
+        TerminalSize newSize = screen.doResizeIfNecessary();
+        if (newSize != null) {
+            screen.clear(); //reagálunk az újreméretezésre
+        }
+
         screen.clear();
         TextGraphics g = screen.newTextGraphics();
 
@@ -76,7 +81,7 @@ public class LanternaGameRenderer {
     private void renderDraw() {
         TextGraphics g = screen.newTextGraphics();
 
-        String message = "Az eredmény döntetlen! Nyomjon Enter-t a kilépéshez!";
+        String message = "Draw! Press Enter to return to the main menu";
 
         TerminalSize size = screen.getTerminalSize();
         int x = (size.getColumns() - message.length()) / 2;
@@ -92,7 +97,7 @@ public class LanternaGameRenderer {
     private void renderWin(CellVO.Value winner) {
         TextGraphics g = screen.newTextGraphics();
 
-        String message = "A meccset nyerte az " + winner + "! Nyomjon Enter-t a kilépéshez!";
+        String message = "The winner is: " + winner + " ! Press Enter to return to the main menu";
 
         TerminalSize size = screen.getTerminalSize();
         int x = (size.getColumns() - message.length()) / 2;

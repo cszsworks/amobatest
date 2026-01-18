@@ -1,8 +1,11 @@
 package com.cszsworks.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public final class CellVO {
+public final class CellVO implements Serializable {
+    //bytestreamként menthető, uid gen
+    private static final long serialVersionUID = 1L;
 
     public enum Value {
         X,

@@ -3,6 +3,7 @@ package com.cszsworks.view;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.input.InputProvider;
 import com.googlecode.lanterna.screen.Screen;
 
 public class LanternaMenuRenderer {
@@ -13,6 +14,10 @@ public class LanternaMenuRenderer {
     }
 
     public void renderMenu(String[] options, int selectedIndex) throws Exception {
+        TerminalSize newSize = screen.doResizeIfNecessary();
+        if (newSize != null) {
+            screen.clear(); //reagálunk az újreméretezésre
+        }
         screen.clear();
         TextGraphics g = screen.newTextGraphics();
 
@@ -31,5 +36,15 @@ public class LanternaMenuRenderer {
         }
 
         screen.refresh();
+    }
+
+    public Screen getScreen() {
+        return screen;
+    }
+
+    public void close() {
+        try {
+            screen.stopScreen();
+        } catch (Exception ignored) {}
     }
 }

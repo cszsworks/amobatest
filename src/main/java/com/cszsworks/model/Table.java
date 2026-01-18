@@ -1,7 +1,12 @@
 package com.cszsworks.model;
 import com.cszsworks.exception.InvalidCellPositionException;
 
-public class Table {
+import java.io.Serializable;
+
+public class Table implements Serializable {
+    //bytestreamként menthető, uid gen
+    private static final long serialVersionUID = 1L;
+
     private CellVO.Value winState;
     private final int rows;
     private final int cols;
@@ -182,14 +187,6 @@ public class Table {
         cells[row][col] = cells[row][col].withValue(newValue);
     }
 
-    public void printTable() {
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
-                System.out.print(cells[r][c].getValue() + " ");
-            }
-            System.out.println();
-        }
-    }
 
     public int getRows() {
         return rows;
