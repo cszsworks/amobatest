@@ -6,6 +6,7 @@ import com.cszsworks.controller.menu.MenuController;
 import com.cszsworks.model.CellVO;
 import com.cszsworks.model.GameConfig;
 import com.cszsworks.model.Table;
+import com.cszsworks.persistence.JSONToSQL;
 import com.cszsworks.saves.GameSaveData;
 import com.cszsworks.saves.SaveManager;
 import com.cszsworks.view.LanternaGameRenderer;
@@ -33,7 +34,11 @@ public class Game {
         }
 
         System.out.println("Hello, " + playerName + "!");
+        //adatbazis beszélgetés
 
+        String FILE_PATH = "highscores.json";
+
+        JSONToSQL.exportJSONToSQL(FILE_PATH);
 
         AppState appState = AppState.MAIN_MENU;
         int menuSelection = 0;
@@ -108,7 +113,7 @@ public class Game {
             }
             else if(appState == AppState.IN_GAME)
             {
-                GameConfig newGame = new GameConfig(playerName,5,5,4);
+                GameConfig newGame = new GameConfig(playerName,8,8,4);
                 Table newTable = new Table(newGame.getRows(), newGame.getCols(), newGame.getWinLength());
 
                 GameController controlGame = new GameController(newTable,newGame,gameRenderer);

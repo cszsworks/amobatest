@@ -9,7 +9,7 @@ public class MenuController {
     public int menuSelection;
     private AppState appState;
 
-    private String[] options = {"Start Game", "Load Game", "High Scores", "Quit"};
+    private String[] options = {"New Game", "Load Game", "High Scores", "Quit"};
 
     public MenuController(int menuSelection, LanternaMenuRenderer renderer) {
         this.menuSelection = menuSelection;

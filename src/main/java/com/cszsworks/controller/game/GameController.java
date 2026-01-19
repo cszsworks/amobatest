@@ -4,8 +4,11 @@ import com.cszsworks.controller.menu.AppState;
 import com.cszsworks.model.CellVO;
 import com.cszsworks.model.GameConfig;
 import com.cszsworks.model.Table;
+import com.cszsworks.persistence.json.HighscoreJson;
+import com.cszsworks.persistence.model.Highscore;
 import com.cszsworks.saves.GameSaveData;
 import com.cszsworks.saves.SaveManager;
+import com.cszsworks.util.ScoreCalculator;
 import com.cszsworks.util.WaitForEnter;
 import com.cszsworks.view.LanternaGameRenderer;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -55,7 +58,14 @@ public class GameController {
             renderer.renderGame(state, table, cursorRow, cursorCol);
 
             CellVO.Value winner = table.checkWinner();
-            if (winner == CellVO.Value.X) state = GameState.X_WINS;
+
+            //HA AZ EMBER NYERT, HIGH SCORE-T GENERÁLUNK
+            if (winner == CellVO.Value.X) {
+                Highscore winnerScore = new Highscore(config.getPlayerName(), ScoreCalculator.CalculateScore(config));
+                HighscoreJson.saveHighscore(winnerScore);
+                state = GameState.X_WINS;
+            }
+
             else if (winner == CellVO.Value.O) state = GameState.O_WINS;
             else if (table.isBoardFull()) state = GameState.DRAW;
 
@@ -74,7 +84,7 @@ public class GameController {
                 }
             }
         }
-
+        //itt hívom meg a renderer-t aszerint hogy milyen state-ben van a játék
         renderer.renderGame(state, table, cursorRow, cursorCol);
         WaitForEnter.waitForEnter(renderer);
         return appState;
@@ -109,6 +119,7 @@ public class GameController {
                 }
             }
             case Escape -> {
+                saveGame();
                 return AppState.MAIN_MENU;
             }
             case F5 -> {
