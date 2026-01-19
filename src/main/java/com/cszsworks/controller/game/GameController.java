@@ -6,6 +6,7 @@ import com.cszsworks.model.GameConfig;
 import com.cszsworks.model.Table;
 import com.cszsworks.saves.GameSaveData;
 import com.cszsworks.saves.SaveManager;
+import com.cszsworks.util.WaitForEnter;
 import com.cszsworks.view.LanternaGameRenderer;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -19,6 +20,8 @@ public class GameController {
     private final Table table;
     private final GameConfig config; // holds playerName, board size, winLength, turn info
     private final LanternaGameRenderer renderer;
+    public AppState appState = AppState.IN_GAME;
+    public GameState state = GameState.PLAYING;
 
     private int cursorRow = 0;
     private int cursorCol = 0;
@@ -46,8 +49,7 @@ public class GameController {
     // --- GAME LOOP ---
 
     public AppState gameLoop() throws Exception {
-        AppState appState = AppState.IN_GAME;
-        GameState state = GameState.PLAYING;
+
 
         while (state == GameState.PLAYING) {
             renderer.renderGame(state, table, cursorRow, cursorCol);
@@ -63,7 +65,8 @@ public class GameController {
             }
 
             if (config.isPlayerTurn()) {
-                handlePlayerInput();
+                appState = handlePlayerInput();
+                if(appState == AppState.MAIN_MENU)return appState;
             } else {
                 if (!aiMove()) {
                     state = GameState.DRAW;
@@ -73,16 +76,16 @@ public class GameController {
         }
 
         renderer.renderGame(state, table, cursorRow, cursorCol);
-        waitForEnter();
+        WaitForEnter.waitForEnter(renderer);
         return appState;
     }
 
-    // --- INPUT HANDLING ---
+    // --- INPUT KEZELÉS ---
 
-    private void handlePlayerInput() throws Exception {
+    private AppState handlePlayerInput() throws Exception {
         boolean turnDone = false;
         KeyStroke key = renderer.getScreen().readInput();
-        if (key == null) return;
+        if (key == null)  return AppState.IN_GAME;
 
         switch (key.getKeyType()) {
             case ArrowUp -> cursorRow = Math.max(0, cursorRow - 1);
@@ -106,14 +109,14 @@ public class GameController {
                 }
             }
             case Escape -> {
-                renderer.close();
-                System.exit(0);
+                return AppState.MAIN_MENU;
             }
             case F5 -> saveGame();
             default -> {}
         }
 
         if (turnDone) config.setPlayerTurn(false);
+        return AppState.IN_GAME;
     }
 
     // --- GAME LOGIC ---
@@ -154,11 +157,5 @@ public class GameController {
 
     // --- UTILITY ---
 
-    private void waitForEnter() throws Exception {
-        while (true) {
-            KeyStroke key = renderer.getScreen().readInput();
-            if (key == null) continue;
-            if (key.getKeyType() == KeyType.Enter || key.getKeyType() == KeyType.Escape) return;
-        }
-    }
+
 }
