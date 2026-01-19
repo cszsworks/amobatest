@@ -10,15 +10,17 @@ public class GameSaveData implements Serializable {
 
     private final GameConfig config;
     private final Table table;
-    private final boolean playerTurn;
 
-    public GameSaveData(GameConfig config, Table table, boolean playerTurn) {
+    public GameSaveData(GameConfig config, Table table) {
         this.config = config;
         this.table = table;
-        this.playerTurn = playerTurn;
     }
 
-    public GameConfig getConfig() { return config; }
-    public Table getTable() { return table; }
-    public boolean isPlayerTurn() { return playerTurn; }
+    public GameConfig getConfig() {
+        return config;
+    }
+
+    public Table getTable() {
+        return table;
+    }
 }

@@ -111,7 +111,10 @@ public class GameController {
             case Escape -> {
                 return AppState.MAIN_MENU;
             }
-            case F5 -> saveGame();
+            case F5 -> {
+                saveGame();
+                return appState.MAIN_MENU;
+            }
             default -> {}
         }
 
@@ -122,7 +125,7 @@ public class GameController {
     // --- GAME LOGIC ---
 
     private void saveGame() {
-        GameSaveData save = new GameSaveData(config, table, config.isPlayerTurn());
+        GameSaveData save = new GameSaveData(config, table);
         String filename = config.getPlayerName() + "_save.dat";
         SaveManager.createSave(save, filename);
         System.out.println("Game saved to " + filename);
