@@ -31,7 +31,14 @@ public class HighscoreJson {
             //obj.put key value párokat ad hozzá
             obj.put("playerName", highscore.getPlayerName());
             obj.put("score", highscore.getScore());
-            obj.put("playedAt", highscore.getPlayedAt().format(FORMATTER));
+            //az időnél az SQL formátum eléréséhez igy jutunk:
+            obj.put(
+                    "playedAt",
+                    highscore.getPlayedAt()
+                            .withNano(0)
+                            .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+            );
+
 
             // JSON object -> JSON tömbbe
             array.put(obj);

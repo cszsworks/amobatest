@@ -21,7 +21,8 @@ public class JSONToSQL {
             JSONArray array = new JSONArray(content);
 
             try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS)) {
-                String sql = "INSERT INTO highscores (username, highscore, updated_at) VALUES (?, ?, ?)";
+                //az ignore a duplicate kihagyás username,highscore,updated_at-re
+                String sql = "INSERT IGNORE INTO highscores (username, highscore, updated_at) VALUES (?, ?, ?)";;
                 //előre megírt SQL query
                 PreparedStatement stmt = conn.prepareStatement(sql);
 
@@ -32,7 +33,8 @@ public class JSONToSQL {
                     //begyüjti az adatokat a json keyektől
                     String playerName = obj.getString("playerName");
                     int score = obj.getInt("score");
-                    LocalDateTime playedAt = LocalDateTime.parse(obj.getString("playedAt"), formatter);
+                    LocalDateTime playedAt = LocalDateTime.parse(obj.getString("playedAt"), formatter)
+                            .withNano(0);
 
                     //sorrendben pótoljuk a ?-eket
                     stmt.setString(1, playerName);

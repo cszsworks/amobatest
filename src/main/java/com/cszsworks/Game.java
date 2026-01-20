@@ -2,14 +2,19 @@ package com.cszsworks;
 
 import com.cszsworks.controller.game.GameController;
 import com.cszsworks.controller.menu.AppState;
+import com.cszsworks.controller.menu.HighScoreMenuController;
 import com.cszsworks.controller.menu.MenuController;
 import com.cszsworks.model.CellVO;
 import com.cszsworks.model.GameConfig;
 import com.cszsworks.model.Table;
 import com.cszsworks.persistence.JSONToSQL;
+import com.cszsworks.persistence.SQLToJSON;
+import com.cszsworks.persistence.model.HighScoreDisplayEntry;
 import com.cszsworks.saves.GameSaveData;
 import com.cszsworks.saves.SaveManager;
+import com.cszsworks.util.WaitForKeyPress;
 import com.cszsworks.view.LanternaGameRenderer;
+import com.cszsworks.view.LanternaHighScoreRenderer;
 import com.cszsworks.view.LanternaMenuRenderer;
 import com.cszsworks.view.StatusBarRenderer;
 import com.googlecode.lanterna.screen.Screen;
@@ -18,6 +23,7 @@ import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 public class Game {
@@ -33,12 +39,20 @@ public class Game {
             playerName = "Player1"; // fallback default
         }
 
+
+
         System.out.println("Hello, " + playerName + "!");
         //adatbazis beszélgetés
 
         String FILE_PATH = "highscores.json";
+        //ha a process zar, a local data hozzáadódik az SQL-hez
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("Uploading remaining local highscores to database...");
+            JSONToSQL.exportJSONToSQL(FILE_PATH);
+            System.out.println("Highscores upload finished.");
+        }));
 
-        JSONToSQL.exportJSONToSQL(FILE_PATH);
+        SQLToJSON.exportSQLToJSON(FILE_PATH);
 
         AppState appState = AppState.MAIN_MENU;
         int menuSelection = 0;
@@ -66,11 +80,13 @@ public class Game {
         }
 
         LanternaGameRenderer gameRenderer;
+        LanternaHighScoreRenderer highScoreRenderer;
         LanternaMenuRenderer menuRenderer;
         StatusBarRenderer statusBar;
         try {
             gameRenderer = new LanternaGameRenderer(mainScreen);
             menuRenderer = new LanternaMenuRenderer(mainScreen);
+            highScoreRenderer = new LanternaHighScoreRenderer(mainScreen);
             statusBar = new StatusBarRenderer(mainScreen);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -94,6 +110,22 @@ public class Game {
                     throw new RuntimeException(e);
                 }
             }
+            else if(appState == AppState.HIGH_SCORE_SCREEN)
+            {
+                System.out.println("meghivom a high score kepernyot");
+                JSONToSQL.exportJSONToSQL(FILE_PATH);
+                HighScoreMenuController highScoreControl =
+                        new HighScoreMenuController(highScoreRenderer);
+
+                highScoreControl.showHighScores();
+
+                try {
+                    WaitForKeyPress.waitForAnyKey(highScoreRenderer);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                appState = AppState.MAIN_MENU;
+            }
             else if(appState == AppState.LOAD_GAME)
             {
                 GameSaveData loadedSave = SaveManager.loadSave(playerName + "_save.dat");
@@ -109,6 +141,7 @@ public class Game {
                     else {
                     System.out.println("No save file found!");
                     appState = AppState.MAIN_MENU;
+                    //visszatér menübe
             }
             }
             else if(appState == AppState.IN_GAME)

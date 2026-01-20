@@ -9,10 +9,9 @@ import com.cszsworks.persistence.model.Highscore;
 import com.cszsworks.saves.GameSaveData;
 import com.cszsworks.saves.SaveManager;
 import com.cszsworks.util.ScoreCalculator;
-import com.cszsworks.util.WaitForEnter;
+import com.cszsworks.util.WaitForKeyPress;
 import com.cszsworks.view.LanternaGameRenderer;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -86,7 +85,7 @@ public class GameController {
         }
         //itt hívom meg a renderer-t aszerint hogy milyen state-ben van a játék
         renderer.renderGame(state, table, cursorRow, cursorCol);
-        WaitForEnter.waitForEnter(renderer);
+        WaitForKeyPress.waitForEnter(renderer);
         return appState;
     }
 

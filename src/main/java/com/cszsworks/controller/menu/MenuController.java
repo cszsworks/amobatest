@@ -64,7 +64,7 @@ public class MenuController {
                 {
                     case 0 -> appState = AppState.IN_GAME;
                     case 1 -> appState = AppState.LOAD_GAME;
-//                    case 2 -> appState = AppState.HIGH_SCORE_SCREEN;
+                    case 2 -> appState = AppState.HIGH_SCORE_SCREEN;
                     case 3 -> appState = AppState.EXIT;
                 }
             }
