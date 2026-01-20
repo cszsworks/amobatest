@@ -4,14 +4,14 @@ import com.cszsworks.view.LanternaMenuRenderer;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
-public class MenuController {
+public class MainMenuController {
     private final LanternaMenuRenderer renderer;
     public int menuSelection;
     private AppState appState;
 
     private String[] options = {"New Game", "Load Game", "High Scores", "Quit"};
 
-    public MenuController(int menuSelection, LanternaMenuRenderer renderer) {
+    public MainMenuController(int menuSelection, LanternaMenuRenderer renderer) {
         this.menuSelection = menuSelection;
         this.renderer = renderer;
         appState = AppState.MAIN_MENU;
@@ -62,7 +62,7 @@ public class MenuController {
             {
                 switch (menuSelection)
                 {
-                    case 0 -> appState = AppState.IN_GAME;
+                    case 0 -> appState = AppState.NEW_GAME_SETUP;
                     case 1 -> appState = AppState.LOAD_GAME;
                     case 2 -> appState = AppState.HIGH_SCORE_SCREEN;
                     case 3 -> appState = AppState.EXIT;

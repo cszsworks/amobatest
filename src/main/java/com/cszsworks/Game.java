@@ -3,27 +3,22 @@ package com.cszsworks;
 import com.cszsworks.controller.game.GameController;
 import com.cszsworks.controller.menu.AppState;
 import com.cszsworks.controller.menu.HighScoreMenuController;
-import com.cszsworks.controller.menu.MenuController;
-import com.cszsworks.model.CellVO;
+import com.cszsworks.controller.menu.MainMenuController;
+import com.cszsworks.controller.menu.NewGameMenuController;
 import com.cszsworks.model.GameConfig;
 import com.cszsworks.model.Table;
 import com.cszsworks.persistence.JSONToSQL;
 import com.cszsworks.persistence.SQLToJSON;
-import com.cszsworks.persistence.model.HighScoreDisplayEntry;
 import com.cszsworks.saves.GameSaveData;
 import com.cszsworks.saves.SaveManager;
 import com.cszsworks.util.WaitForKeyPress;
-import com.cszsworks.view.LanternaGameRenderer;
-import com.cszsworks.view.LanternaHighScoreRenderer;
-import com.cszsworks.view.LanternaMenuRenderer;
-import com.cszsworks.view.StatusBarRenderer;
+import com.cszsworks.view.*;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Scanner;
 
 public class Game {
@@ -81,13 +76,15 @@ public class Game {
 
         LanternaGameRenderer gameRenderer;
         LanternaHighScoreRenderer highScoreRenderer;
+        LanternaNewGameRenderer newGameRenderer;
         LanternaMenuRenderer menuRenderer;
-        StatusBarRenderer statusBar;
+        StatusBarRenderer statusBarRenderer;
         try {
             gameRenderer = new LanternaGameRenderer(mainScreen);
             menuRenderer = new LanternaMenuRenderer(mainScreen);
             highScoreRenderer = new LanternaHighScoreRenderer(mainScreen);
-            statusBar = new StatusBarRenderer(mainScreen);
+            newGameRenderer =new LanternaNewGameRenderer(mainScreen);
+            statusBarRenderer = new StatusBarRenderer(mainScreen);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -103,7 +100,7 @@ public class Game {
         {
             if(appState == AppState.MAIN_MENU)
             {
-                MenuController controlMenu = new MenuController(menuSelection,menuRenderer);
+                MainMenuController controlMenu = new MainMenuController(menuSelection,menuRenderer);
                 try {
                     appState = controlMenu.startMainMenu();
                 } catch (Exception e) {
@@ -143,6 +140,29 @@ public class Game {
                     appState = AppState.MAIN_MENU;
                     //visszatér menübe
             }
+            }
+            else if(appState == AppState.NEW_GAME_SETUP)
+            {
+                NewGameMenuController newMenu =
+                        new NewGameMenuController(newGameRenderer);
+
+                appState = newMenu.startNewMenu(playerName);
+
+                GameConfig newGame = newMenu.getGameConfig();
+                Table newTable = new Table(
+                        newGame.getRows(),
+                        newGame.getCols(),
+                        newGame.getWinLength()
+                );
+
+                GameController controlGame =
+                        new GameController(newTable, newGame, gameRenderer);
+
+                try{
+                    appState = controlGame.gameLoop();
+                }catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
             else if(appState == AppState.IN_GAME)
             {
