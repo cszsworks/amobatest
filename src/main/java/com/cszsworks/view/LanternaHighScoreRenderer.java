@@ -1,66 +1,54 @@
 package com.cszsworks.view;
 
-
-import com.cszsworks.controller.game.GameState;
-import com.cszsworks.model.Table;
-import com.cszsworks.model.CellVO;
 import com.cszsworks.persistence.model.HighScoreDisplayEntry;
+import com.cszsworks.util.ThemeManager;
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.screen.TerminalScreen;
-import com.googlecode.lanterna.terminal.swing.*;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
 import java.util.List;
 
-
 public class LanternaHighScoreRenderer {
-    private final Screen screen;
-    private List<HighScoreDisplayEntry> scores;
+
+    private final MultiWindowTextGUI gui;
+    private BasicWindow window;
 
     public LanternaHighScoreRenderer(Screen screen) {
-        this.screen = screen;
+        this.gui = new MultiWindowTextGUI(screen);
     }
 
+    public void render(List<HighScoreDisplayEntry> scores) {
+        gui.setTheme(ThemeManager.getTheme());
+        window = new BasicWindow("High Scores");
 
+        // Main panel with vertical layout
+        Panel mainPanel = new Panel();
+        mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+        mainPanel.setPreferredSize(new TerminalSize(40, 20));
 
-    public Screen getScreen() {
-        return screen;
-    }
+        // Title
+        mainPanel.addComponent(new Label("Top High Scores")
+                .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center)));
 
-    public void render(List<HighScoreDisplayEntry> scores) throws IOException {
-
-        screen.clear();
-        TextGraphics tg = screen.newTextGraphics();
-
-        int startRow = 1;      // top padding
-        int nameColumn = 2;    // left side
-        int scoreColumn = 30;  // right side (adjust if needed)
-
-        int maxLines = Math.min(10, scores.size());
-
-        for (int i = 0; i < maxLines; i++) {
-            HighScoreDisplayEntry entry = scores.get(i);
-
-            tg.putString(
-                    nameColumn,
-                    startRow + i,
-                    entry.getUsername()
-            );
-
-            tg.putString(
-                    scoreColumn,
-                    startRow + i,
-                    String.valueOf(entry.getScore())
-            );
+        // Highscore entries
+        int rank = 1;
+        for (HighScoreDisplayEntry entry : scores) {
+            String line = String.format("%2d. %-15s %5d", rank++, entry.getUsername(), entry.getScore());
+            mainPanel.addComponent(new Label(line));
         }
 
-        screen.refresh();
+        mainPanel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
+
+        // Close button to return to main menu
+        Button closeButton = new Button("Return to Main Menu", () -> window.close());
+        mainPanel.addComponent(closeButton.setLayoutData(
+                LinearLayout.createLayoutData(LinearLayout.Alignment.Center)
+        ));
+
+        window.setComponent(mainPanel);
+        window.setHints(java.util.Arrays.asList(Window.Hint.CENTERED));
+
+        // Show window (blocks until closed)
+        gui.addWindowAndWait(window);
     }
-
-
 }

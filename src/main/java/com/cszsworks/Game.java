@@ -11,8 +11,10 @@ import com.cszsworks.persistence.JSONToSQL;
 import com.cszsworks.persistence.SQLToJSON;
 import com.cszsworks.saves.GameSaveData;
 import com.cszsworks.saves.SaveManager;
+import com.cszsworks.util.ThemeManager;
 import com.cszsworks.util.WaitForKeyPress;
 import com.cszsworks.view.*;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
@@ -31,10 +33,20 @@ public class Game {
         String playerName = scanner.nextLine().trim();
 
         if (playerName.isEmpty()) {
-            playerName = "Player1"; // fallback default
+            playerName = "Player1"; // default
         }
 
+        System.out.println("\nAvailable themes:");
+        ThemeManager.getAvailableThemes().forEach(name -> System.out.println(" - " + name));
 
+        System.out.print("Choose a theme (press Enter for default): ");
+        String themeChoice = scanner.nextLine().trim();
+
+        if (themeChoice.isEmpty() || !ThemeManager.setTheme(themeChoice)) {
+            System.out.println("Using default theme.\n");
+        } else {
+            System.out.println("Theme set to " + themeChoice + "\n");
+        }
 
         System.out.println("Hello, " + playerName + "!");
         //adatbazis beszélgetés
@@ -57,8 +69,7 @@ public class Game {
 
         // SwingTerminalFrame használata,legalább egy AutoCloseTrigger kell
 
-        SwingTerminalFrame terminal = new SwingTerminalFrame(
-                "Amőba",
+        SwingTerminalFrame terminal = new SwingTerminalFrame("Amőba",
                 TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode
         );
 
@@ -70,15 +81,23 @@ public class Game {
             mainScreen = new TerminalScreen(terminal);
             mainScreen.startScreen();
             mainScreen.setCursorPosition(null);
+            //HD méretü képernyö méretezés
+            terminal.setSize(1366, 768);
+            //a képernyő közepéhez mérten helyezi el az ablakot
+            terminal.setLocationRelativeTo(null);
+            //manualis resize hívás
+            mainScreen.doResizeIfNecessary();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
+        //létrehozom a renderer objektumokat
         LanternaGameRenderer gameRenderer;
         LanternaHighScoreRenderer highScoreRenderer;
         LanternaNewGameRenderer newGameRenderer;
         LanternaMenuRenderer menuRenderer;
         try {
+            //betöltöm a renderer objektumokat
             gameRenderer = new LanternaGameRenderer(mainScreen);
             menuRenderer = new LanternaMenuRenderer(mainScreen);
             highScoreRenderer = new LanternaHighScoreRenderer(mainScreen);
@@ -105,20 +124,13 @@ public class Game {
                     throw new RuntimeException(e);
                 }
             }
-            else if(appState == AppState.HIGH_SCORE_SCREEN)
-            {
-                System.out.println("meghivom a high score kepernyot");
+            else if(appState == AppState.HIGH_SCORE_SCREEN) {
+                // Ensure local JSON is synced to DB
                 JSONToSQL.exportJSONToSQL(FILE_PATH);
-                HighScoreMenuController highScoreControl =
-                        new HighScoreMenuController(highScoreRenderer);
 
+                HighScoreMenuController highScoreControl = new HighScoreMenuController(highScoreRenderer);
                 highScoreControl.showHighScores();
 
-                try {
-                    WaitForKeyPress.waitForAnyKey(highScoreRenderer);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
                 appState = AppState.MAIN_MENU;
             }
             else if(appState == AppState.LOAD_GAME)

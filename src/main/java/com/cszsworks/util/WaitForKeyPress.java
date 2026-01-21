@@ -14,20 +14,6 @@ public class WaitForKeyPress {
             if (key.getKeyType() == KeyType.Enter || key.getKeyType() == KeyType.Escape) return;
         }
     }
-    public static void waitForEnter(LanternaMenuRenderer renderer) throws Exception {
-        while (true) {
-            KeyStroke key = renderer.getScreen().readInput();
-            if (key == null) continue;
-            if (key.getKeyType() == KeyType.Enter || key.getKeyType() == KeyType.Escape) return;
-        }
-    }
 
-    public static void waitForAnyKey(LanternaHighScoreRenderer renderer) throws Exception {
-        while (true) {
-            KeyStroke key = renderer.getScreen().readInput();
-            if (key == null) continue;
-            if (key.getKeyType() !=null) return;
-        }
-    }
 
 }

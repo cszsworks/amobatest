@@ -14,7 +14,6 @@ public class Highscore {
         this.playedAt = LocalDateTime.now();
     }
 
-    // getters
     public String getPlayerName() { return playerName; }
     public int getScore() { return score; }
     public LocalDateTime getPlayedAt() { return playedAt; }

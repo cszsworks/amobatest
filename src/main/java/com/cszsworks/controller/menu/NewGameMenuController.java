@@ -15,8 +15,8 @@ public class NewGameMenuController {
     public AppState startNewMenu(String playerName) {
         renderer.render();
 
-        int rows = Integer.parseInt(renderer.getRowsText());
-        int cols = Integer.parseInt(renderer.getColsText());
+        int rows = Integer.parseInt(renderer.getSizeText());
+        int cols = Integer.parseInt(renderer.getSizeText());
         int win  = Integer.parseInt(renderer.getWinLengthText());
 
         gameConfig = new GameConfig(playerName, rows, cols, win);

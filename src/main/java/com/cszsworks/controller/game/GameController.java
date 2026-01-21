@@ -28,16 +28,25 @@ public class GameController {
     private int cursorRow = 0;
     private int cursorCol = 0;
 
-    // --- CONSTRUCTORS ---
 
-    // New game
+    // Új játék konstruktora
     public GameController(Table table, GameConfig config, LanternaGameRenderer renderer) {
         this.table = table;
         this.config = config;
         this.renderer = renderer;
+
+        //ez a kezdési logika lép életbe ha új játék. itt a konstruk berakja a játékos helyett az X-et
+        if (config.isPlayerTurn()) {
+            int centerRow = table.getRows() / 2;
+            int centerCol = table.getCols() / 2;
+            table.setCell(centerRow, centerCol, CellVO.Value.X);
+            config.setPlayerTurn(false);
+            cursorRow = centerRow;
+            cursorCol = centerCol;
+        }
     }
 
-    // Load game
+    // Load game konstruktora
     public GameController(GameSaveData gameSave, LanternaGameRenderer renderer) {
         this.table = gameSave.getTable();
         this.config = gameSave.getConfig();
@@ -165,10 +174,11 @@ public class GameController {
     }
 
     public boolean movePossible(int row, int col) {
-        return table.getCell(row, col).getValue() == CellVO.Value.EMPTY;
+
+        return table.getCell(row, col).getValue() == CellVO.Value.EMPTY
+                && table.isConnectedToExisting(row, col);
     }
 
-    // --- UTILITY ---
 
 
 }

@@ -210,6 +210,7 @@ public class Table implements Serializable {
         }
         return true;
     }
+
     public CellVO.Value checkWinner()
     {
         CellVO.Value w = CellVO.Value.EMPTY;
@@ -226,4 +227,36 @@ public class Table implements Serializable {
         w = checkSWDiagonal();
         return w;
     }
+    //segítő method , ellenőrzi hogy a szomszédos mezőben van-e már jel
+    // (row-1,col-1)  (row-1,col)  (row-1,col+1)
+    // (row  ,col-1)  (row  ,col)  (row  ,col+1)
+    // (row+1,col-1)  (row+1,col)  (row+1,col+1)
+    public boolean isConnectedToExisting(int row, int col) {
+        // Ha a cella nem üres, nem használható
+        if (cells[row][col].getValue() != CellVO.Value.EMPTY) {
+            return false;
+        }
+
+        // Szomszédokon keresztül loop
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                //önmagát kihagy
+                if (i == 0 && j == 0) continue;
+
+                int newRow = row + i;
+                int newCol = col + j;
+
+                // határok
+                if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+                    if (cells[newRow][newCol].getValue() != CellVO.Value.EMPTY) {
+                        return true;  // talált egy csatlakozót
+                    }
+                }
+            }
+        }
+
+        // Nincs szomszéd ami nem üres
+        return false;
+    }
+
 }
