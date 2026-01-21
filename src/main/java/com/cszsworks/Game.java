@@ -78,13 +78,11 @@ public class Game {
         LanternaHighScoreRenderer highScoreRenderer;
         LanternaNewGameRenderer newGameRenderer;
         LanternaMenuRenderer menuRenderer;
-        StatusBarRenderer statusBarRenderer;
         try {
             gameRenderer = new LanternaGameRenderer(mainScreen);
             menuRenderer = new LanternaMenuRenderer(mainScreen);
             highScoreRenderer = new LanternaHighScoreRenderer(mainScreen);
             newGameRenderer =new LanternaNewGameRenderer(mainScreen);
-            statusBarRenderer = new StatusBarRenderer(mainScreen);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
