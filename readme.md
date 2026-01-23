@@ -84,7 +84,7 @@ mvn clean install
 3. **Run the game**:
 
 ```bash
-mvn exec:java -Dexec.mainClass="com.cszsworks.GameLauncher"
+java -jar target\AmobaOne-1.0-SNAPSHOT-jar-with-dependencies.jar
 ```
 
 ---
