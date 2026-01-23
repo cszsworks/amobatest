@@ -121,10 +121,14 @@
                   <exclude>com/cszsworks/model/GameConfig.*</exclude>
                   <exclude>com/cszsworks/model/CellVO.*</exclude>
                   <exclude>com/cszsworks/util/ThemeManager.*</exclude>
+                  <exclude>com/cszsworks/persistence/HighscoreJson.*</exclude>
+                  <exclude>com/cszsworks/GameLauncher.*</exclude>
                   <exclude>com/cszsworks/util/WaitForKeyPress.*</exclude>
-
+                  <exclude>com/cszsworks/saves/GameSaveData.*</exclude>
                   <!-- teljes package exlude -->
                   <exclude>com/cszsworks/view/**/*</exclude>
+                  <exclude>com/cszsworks/exception/**/*</exclude>
+                  <exclude>com/persistence/model/**/*</exclude>
               </excludes>
           </configuration>
         <executions>

@@ -11,17 +11,16 @@ public class GameConfig implements Serializable {
     private final int rows;
     private final int cols;
     private final int winLength;
-    private boolean playerTurn; // true = player X's turn, false = AI/O's turn
+    private boolean playerTurn;
 
     public GameConfig(String playerName, int rows, int cols, int winLength) {
         this.playerName = playerName;
         this.rows = rows;
         this.cols = cols;
         this.winLength = winLength;
-        this.playerTurn = true; // default: player starts
+        this.playerTurn = true; // default játékos kezd
     }
 
-    // --- GETTERS ---
     public String getPlayerName() {
         return playerName;
     }
@@ -42,7 +41,6 @@ public class GameConfig implements Serializable {
         return playerTurn;
     }
 
-    // --- SETTERS ---
     public void setPlayerTurn(boolean playerTurn) {
         this.playerTurn = playerTurn;
     }
