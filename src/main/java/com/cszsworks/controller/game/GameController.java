@@ -4,7 +4,7 @@ import com.cszsworks.controller.menu.AppState;
 import com.cszsworks.model.CellVO;
 import com.cszsworks.model.GameConfig;
 import com.cszsworks.model.Table;
-import com.cszsworks.persistence.json.HighscoreJson;
+import com.cszsworks.persistence.HighscoreJson;
 import com.cszsworks.persistence.model.Highscore;
 import com.cszsworks.saves.GameSaveData;
 import com.cszsworks.saves.SaveManager;
@@ -20,7 +20,7 @@ import java.util.List;
 public class GameController {
 
     private final Table table;
-    private final GameConfig config; // holds playerName, board size, winLength, turn info
+    private final GameConfig config; //playerName, board size, winLength, turn info
     private final LanternaGameRenderer renderer;
     public AppState appState = AppState.IN_GAME;
     public GameState state = GameState.PLAYING;
@@ -54,20 +54,17 @@ public class GameController {
         this.renderer = renderer;
     }
 
-    public GameConfig getConfig() {
-        return config;
-    }
 
     // --- GAME LOOP ---
 
     public AppState gameLoop() throws Exception {
         while (state == GameState.PLAYING) {
 
-            // Render everything (table + message)
-            renderer.renderGame(state, table, cursorRow, cursorCol, message);
-            message = null; // clear after rendering
+            // full alap render
+            renderer.renderGame(table, cursorRow, cursorCol, message);
+            message = null; //üzenet nullázása, következő hivásnál már üres.
 
-            // Check winner or draw
+            // wincheck
             CellVO.Value winner = table.checkWinner();
             if (winner == CellVO.Value.X) {
                 Highscore winnerScore = new Highscore(config.getPlayerName(), ScoreCalculator.CalculateScore(config));
@@ -87,7 +84,7 @@ public class GameController {
                 break;
             }
 
-            // Handle player or AI turn
+            // player / AI váltás
             if (config.isPlayerTurn()) {
                 appState = handlePlayerInput();
                 if (appState == AppState.MAIN_MENU) return appState;
@@ -101,8 +98,8 @@ public class GameController {
             }
         }
 
-        // Final render to show win/draw message
-        renderer.renderGame(state, table, cursorRow, cursorCol, message);
+        //utolsó render a játékeredményre
+        renderer.renderGame(table, cursorRow, cursorCol, message);
         WaitForKeyPress.waitForEnter(renderer);
 
         return appState;
@@ -138,13 +135,9 @@ public class GameController {
                     message = "Cell is not available!";
                 }
             }
-            case Escape -> {
+            case Escape, F5 -> {
                 saveGame();
                 return AppState.MAIN_MENU;
-            }
-            case F5 -> {
-                saveGame();
-                return appState.MAIN_MENU;
             }
             default -> {}
         }
@@ -153,7 +146,7 @@ public class GameController {
         return AppState.IN_GAME;
     }
 
-    // --- GAME LOGIC ---
+    //lokális save-t hivja meg
 
     private void saveGame() {
         GameSaveData save = new GameSaveData(config, table);
@@ -161,16 +154,17 @@ public class GameController {
         SaveManager.createSave(save, filename);
         System.out.println("Game saved to " + filename);
     }
-
+    //ai mozgás
     public boolean aiMove() {
         if (table.isBoardFull()) return false;
-
+        //betölti összes lehetséges poziciót egy array-be
         List<int[]> positions = new ArrayList<>();
         for (int i = 0; i < table.getRows(); i++) {
             for (int j = 0; j < table.getCols(); j++) {
                 positions.add(new int[]{i, j});
             }
         }
+        //összevekeri a lehetséges pozicókat, ettől lesz random a következő lépés
         Collections.shuffle(positions);
 
         for (int[] pos : positions) {
@@ -178,7 +172,7 @@ public class GameController {
             int col = pos[1];
             if (movePossible(row, col)) {
                 table.setCell(row, col, CellVO.Value.O);
-                config.setPlayerTurn(true); // switch back to player
+                config.setPlayerTurn(true); // irányítás a playernél
                 return true;
             }
         }
@@ -187,7 +181,8 @@ public class GameController {
 
     public boolean movePossible(int row, int col) {
 
-        return table.getCell(row, col).getValue() == CellVO.Value.EMPTY
+        //üres-e , valamit a csatlakozás követlmény igaz-e
+        return table.getCell(row, col).value() == CellVO.Value.EMPTY
                 && table.isConnectedToExisting(row, col);
     }
 

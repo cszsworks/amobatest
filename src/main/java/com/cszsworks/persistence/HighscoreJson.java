@@ -1,4 +1,4 @@
-package com.cszsworks.persistence.json;
+package com.cszsworks.persistence;
 import com.cszsworks.persistence.model.Highscore;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -10,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 
 public class HighscoreJson {
     private static final String FILE_PATH = "highscores.json";
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     public static void saveHighscore(Highscore highscore) {
         try {

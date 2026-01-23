@@ -12,16 +12,18 @@ public class NewGameMenuController {
         this.renderer = renderer;
     }
 
-    public AppState startNewMenu(String playerName) {
+    public void startNewMenu(String playerName) {
         renderer.render();
-
-        int rows = Integer.parseInt(renderer.getSizeText());
-        int cols = Integer.parseInt(renderer.getSizeText());
+        //amit a renderer visszaad a gui2 boxokból, intet csinál belőle
+        int size = Integer.parseInt(renderer.getSizeText());
         int win  = Integer.parseInt(renderer.getWinLengthText());
-
-        gameConfig = new GameConfig(playerName, rows, cols, win);
-
-        return AppState.IN_GAME;
+        if(size < 4)size = 4;
+        else if(size > 25)size = 25;
+        //méret nem lehet túl nagy/kicsi, visszatolja
+        if(win<2 || win > 25) win = 5;
+        //winszám sztenderd 5 , ha inkorrekt
+        //a gameconfig konténerbe menit az adatokat
+        gameConfig = new GameConfig(playerName, size, size, win);
     }
 
     public GameConfig getGameConfig() {

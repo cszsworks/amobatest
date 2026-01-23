@@ -22,7 +22,7 @@ public class JSONToSQL {
 
             try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS)) {
                 //az ignore a duplicate kihagyás username,highscore,updated_at-re
-                String sql = "INSERT IGNORE INTO highscores (username, highscore, updated_at) VALUES (?, ?, ?)";;
+                String sql = "INSERT IGNORE INTO highscores (username, highscore, updated_at) VALUES (?, ?, ?)";
                 //előre megírt SQL query
                 PreparedStatement stmt = conn.prepareStatement(sql);
 

@@ -72,6 +72,7 @@ public class Game {
         );
 
         terminal.setVisible(true);
+        terminal.toFront();       // Előtérbe ugrik
         terminal.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE); //program megáll háttérben ha az ablak zár
 
         // most a lanterna terminal körülveszi
@@ -94,6 +95,8 @@ public class Game {
         LanternaHighScoreRenderer highScoreRenderer;
         LanternaNewGameRenderer newGameRenderer;
         LanternaMenuRenderer menuRenderer;
+
+
         try {
             //betöltöm a renderer objektumokat
             gameRenderer = new LanternaGameRenderer(mainScreen);
@@ -122,15 +125,18 @@ public class Game {
                     throw new RuntimeException(e);
                 }
             }
+
             else if(appState == AppState.HIGH_SCORE_SCREEN) {
-                // Ensure local JSON is synced to DB
+                // helyi JSON-ba tölti a távoli SQL-t ha van kapcsolat, és azt irja ki
                 JSONToSQL.exportJSONToSQL(FILE_PATH);
 
                 HighScoreMenuController highScoreControl = new HighScoreMenuController(highScoreRenderer);
                 highScoreControl.showHighScores();
 
                 appState = AppState.MAIN_MENU;
+                //gui2 visszaadja főmenünek
             }
+
             else if(appState == AppState.LOAD_GAME)
             {
                 GameSaveData loadedSave = SaveManager.loadSave(playerName + "_save.dat");
@@ -151,10 +157,9 @@ public class Game {
             }
             else if(appState == AppState.NEW_GAME_SETUP)
             {
-                NewGameMenuController newMenu =
-                        new NewGameMenuController(newGameRenderer);
+                NewGameMenuController newMenu = new NewGameMenuController(newGameRenderer);
 
-                appState = newMenu.startNewMenu(playerName);
+                newMenu.startNewMenu(playerName);
 
                 GameConfig newGame = newMenu.getGameConfig();
                 Table newTable = new Table(

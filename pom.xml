@@ -115,6 +115,18 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.14</version>
+          <configuration>
+              <excludes>
+                  <!-- egyenkénti exclude -->
+                  <exclude>com/cszsworks/model/GameConfig.*</exclude>
+                  <exclude>com/cszsworks/model/CellVO.*</exclude>
+                  <exclude>com/cszsworks/util/ThemeManager.*</exclude>
+                  <exclude>com/cszsworks/util/WaitForKeyPress.*</exclude>
+
+                  <!-- teljes package exlude -->
+                  <exclude>com/cszsworks/view/**/*</exclude>
+              </excludes>
+          </configuration>
         <executions>
           <execution>
             <goals>

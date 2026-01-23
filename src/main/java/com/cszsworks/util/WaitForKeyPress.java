@@ -3,7 +3,7 @@ package com.cszsworks.util;
 import com.cszsworks.view.LanternaGameRenderer;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
-
+//mivel a game renderer nem gui2 alapú, kell a manualis keypress event szakító
 public class WaitForKeyPress {
     public static void waitForEnter(LanternaGameRenderer renderer) throws Exception {
         while (true) {

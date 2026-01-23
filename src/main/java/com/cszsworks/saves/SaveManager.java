@@ -8,7 +8,7 @@ public class SaveManager {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
             oos.writeObject(save);
             System.out.println("Game saved to " + filename);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -18,7 +18,7 @@ public class SaveManager {
 
         if (!file.exists()) {
             System.out.println("Save file not found: " + filename);
-            return null; // indicate that there’s nothing to load
+            return null; // nincs mit tölteni
         }
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
