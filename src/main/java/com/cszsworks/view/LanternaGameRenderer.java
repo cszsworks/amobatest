@@ -26,17 +26,12 @@ public class LanternaGameRenderer {
 
     //lanterna renderTable, bemenet table, cursor sor és oszlop poz paraméterekkel
     public void renderTable(Table table, int cursorRow, int cursorCol) {
-        TerminalSize newSize = screen.doResizeIfNecessary();
-        if (newSize != null) {
-            screen.clear(); //reagálunk az újreméretezésre
-        }
+        TerminalScreen tscreen = (TerminalScreen) screen;
+        tscreen.clear();
 
-        screen.clear();
         TextGraphics g = screen.newTextGraphics();
-
-        TerminalSize size = screen.getTerminalSize();
-        int startX = (size.getColumns() - table.getCols() * 4) / 2;
-        int startY = (size.getRows() - table.getRows()) / 2;
+        int startX = (screen.getTerminalSize().getColumns() - table.getCols() * 4) / 2;
+        int startY = (screen.getTerminalSize().getRows() - table.getRows()) / 2;
 
         for (int i = 0; i < table.getRows(); i++) {
             for (int j = 0; j < table.getCols(); j++) {
@@ -54,28 +49,21 @@ public class LanternaGameRenderer {
                 g.putString(startX + j * 4, startY + i, " " + symbol + " ");
             }
         }
+    }
+
+    public void renderGame(GameState state, Table table, int cursorRow, int cursorCol, String message) {
+        renderTable(table, cursorRow, cursorCol);
+
+        if (message != null && !message.isEmpty()) {
+            TextGraphics g = screen.newTextGraphics();
+            int row = 0; // top row
+            int col = Math.max(0, (screen.getTerminalSize().getColumns() - message.length()) / 2);
+            g.putString(col, row, message);
+        }
 
         try {
             screen.refresh();
         } catch (Exception ignored) {}
-    }
-
-    public void renderGame(GameState state, Table table, int cursorRow, int cursorCol) {
-        switch (state) {
-            case PLAYING -> renderTable(table, cursorRow, cursorCol);
-            case DRAW -> {
-                renderTable(table,0,0);
-                renderDraw();
-            }
-            case X_WINS -> {
-                renderTable(table,0,0);
-                renderWin(CellVO.Value.X);
-            }
-            case O_WINS -> {
-                renderTable(table,0,0);
-                renderWin(CellVO.Value.O);
-            }
-        }
     }
 
     private void renderDraw() {
@@ -114,9 +102,4 @@ public class LanternaGameRenderer {
         return screen;
     }
 
-    public void close() {
-        try {
-            screen.stopScreen();
-        } catch (Exception ignored) {}
-    }
 }

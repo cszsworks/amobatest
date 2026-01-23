@@ -1,8 +1,6 @@
 package com.cszsworks.util;
 
 import com.cszsworks.view.LanternaGameRenderer;
-import com.cszsworks.view.LanternaHighScoreRenderer;
-import com.cszsworks.view.LanternaMenuRenderer;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 

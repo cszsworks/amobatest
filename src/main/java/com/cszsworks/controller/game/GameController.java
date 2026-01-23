@@ -24,7 +24,8 @@ public class GameController {
     private final LanternaGameRenderer renderer;
     public AppState appState = AppState.IN_GAME;
     public GameState state = GameState.PLAYING;
-
+    //ez vezeti át az üzeneteket
+    private String message = null;
     private int cursorRow = 0;
     private int cursorCol = 0;
 
@@ -60,41 +61,50 @@ public class GameController {
     // --- GAME LOOP ---
 
     public AppState gameLoop() throws Exception {
-
-
         while (state == GameState.PLAYING) {
-            renderer.renderGame(state, table, cursorRow, cursorCol);
 
+            // Render everything (table + message)
+            renderer.renderGame(state, table, cursorRow, cursorCol, message);
+            message = null; // clear after rendering
+
+            // Check winner or draw
             CellVO.Value winner = table.checkWinner();
-
-            //HA AZ EMBER NYERT, HIGH SCORE-T GENERÁLUNK
             if (winner == CellVO.Value.X) {
                 Highscore winnerScore = new Highscore(config.getPlayerName(), ScoreCalculator.CalculateScore(config));
                 HighscoreJson.saveHighscore(winnerScore);
                 state = GameState.X_WINS;
+                message = "You won! Press Enter to return to the main menu";
+            } else if (winner == CellVO.Value.O) {
+                state = GameState.O_WINS;
+                message = "AI won! Press Enter to return to the main menu";
+            } else if (table.isBoardFull()) {
+                state = GameState.DRAW;
+                message = "Draw! Press Enter to return to the main menu";
             }
-
-            else if (winner == CellVO.Value.O) state = GameState.O_WINS;
-            else if (table.isBoardFull()) state = GameState.DRAW;
 
             if (state != GameState.PLAYING) {
                 appState = AppState.MAIN_MENU;
                 break;
             }
 
+            // Handle player or AI turn
             if (config.isPlayerTurn()) {
                 appState = handlePlayerInput();
-                if(appState == AppState.MAIN_MENU)return appState;
+                if (appState == AppState.MAIN_MENU) return appState;
             } else {
                 if (!aiMove()) {
                     state = GameState.DRAW;
+                    message = "Draw! Press Enter to return to the main menu";
+                    appState = AppState.MAIN_MENU;
                     break;
                 }
             }
         }
-        //itt hívom meg a renderer-t aszerint hogy milyen state-ben van a játék
-        renderer.renderGame(state, table, cursorRow, cursorCol);
+
+        // Final render to show win/draw message
+        renderer.renderGame(state, table, cursorRow, cursorCol, message);
         WaitForKeyPress.waitForEnter(renderer);
+
         return appState;
     }
 
@@ -103,7 +113,7 @@ public class GameController {
     private AppState handlePlayerInput() throws Exception {
         boolean turnDone = false;
         KeyStroke key = renderer.getScreen().readInput();
-        if (key == null)  return AppState.IN_GAME;
+        if (key == null) return AppState.IN_GAME;
 
         switch (key.getKeyType()) {
             case ArrowUp -> cursorRow = Math.max(0, cursorRow - 1);
@@ -118,12 +128,14 @@ public class GameController {
                 else if (c == 'd') cursorCol = Math.min(table.getCols() - 1, cursorCol + 1);
             }
             case Enter -> {
-                if (movePossible(cursorRow, cursorCol)) {
+                if (state != GameState.PLAYING) {
+                    appState = AppState.MAIN_MENU;
+                } else if (movePossible(cursorRow, cursorCol)) {
                     table.setCell(cursorRow, cursorCol, CellVO.Value.X);
-                    config.setPlayerTurn(false); // switch turn
+                    config.setPlayerTurn(false);
                     turnDone = true;
                 } else {
-                    System.out.println("A mező nem üres!");
+                    message = "Cell is not available!";
                 }
             }
             case Escape -> {
