@@ -92,7 +92,7 @@
             <configuration>
                 <archive>
                     <manifest>
-                        <mainClass>com.cszsworks.Game</mainClass>
+                        <mainClass>com.cszsworks.GameLauncher</mainClass>
                     </manifest>
                 </archive>
                 <descriptorRefs>
