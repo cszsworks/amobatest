@@ -52,4 +52,5 @@ public class HighscoreJson {
             e.printStackTrace();
         }
     }
+
 }
