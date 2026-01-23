@@ -1,10 +1,13 @@
 package com.cszsworks.util;
 
+import com.cszsworks.model.GameConfig;
+//egy hasraütés score kalkuláció a pálya mérete és a nyerési hossz alapján
 public class ScoreCalculator {
+    private ScoreCalculator() {}
 
-    public static int CalculateScore(int rows, int cols, int winLength)
+    public static int CalculateScore(GameConfig config)
     {
-        int score = (rows * cols)*10 + (winLength*10);
-        return score;
+        return (config.getRows() * config.getCols())*10 + (config.getWinLength()*10);
+
     }
 }

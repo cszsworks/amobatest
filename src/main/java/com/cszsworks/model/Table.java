@@ -1,13 +1,15 @@
 package com.cszsworks.model;
 import com.cszsworks.exception.InvalidCellPositionException;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class Table implements Serializable {
     //bytestreamként menthető, uid gen
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    private CellVO.Value winState;
+
     private final int rows;
     private final int cols;
     private final CellVO[][] cells;
@@ -25,7 +27,7 @@ public class Table implements Serializable {
 
 
             for (int j = 0; j < cols; j++) {
-                CellVO.Value cur = cells[i][j].getValue();
+                CellVO.Value cur = cells[i][j].value();
 
                 if (cur == CellVO.Value.EMPTY) {  // skip empty cells
                     sameCount = 0;
@@ -57,7 +59,7 @@ public class Table implements Serializable {
                 CellVO.Value checkAgainst = CellVO.Value.EMPTY;
 
                 for (int row = 0; row < rows; row++) {
-                    CellVO.Value cur = cells[row][col].getValue(); // row first, col second
+                    CellVO.Value cur = cells[row][col].value(); // row first, col second
 
                     if (cur == CellVO.Value.EMPTY) {
                         sameCount = 0;
@@ -92,11 +94,9 @@ public class Table implements Serializable {
                 CellVO.Value checkAgainst = CellVO.Value.EMPTY;
 
                 for (int k = 0; k < winLength; k++) {
-                    CellVO.Value cur = cells[rowStart + k][colStart + k].getValue();
+                    CellVO.Value cur = cells[rowStart + k][colStart + k].value();
 
                     if (cur == CellVO.Value.EMPTY) {
-                        sameCount = 0;
-                        checkAgainst = CellVO.Value.EMPTY;
                         break; // nem nyerhet
                     }
 
@@ -129,11 +129,9 @@ public class Table implements Serializable {
                 CellVO.Value checkAgainst = CellVO.Value.EMPTY;
 
                 for (int k = 0; k < winLength; k++) {
-                    CellVO.Value cur = cells[rowStart + k][colStart - k].getValue();
+                    CellVO.Value cur = cells[rowStart + k][colStart - k].value();
 
                     if (cur == CellVO.Value.EMPTY) {
-                        sameCount = 0;
-                        checkAgainst = CellVO.Value.EMPTY;
                         break; //nem nyerhet
                     }
 
@@ -158,7 +156,6 @@ public class Table implements Serializable {
     public Table(int rows, int cols, int winLength) {
         this.rows = rows;
         this.cols = cols;
-        this.winState = CellVO.Value.EMPTY;
         this.cells = new CellVO[rows][cols];
         this.winLength = winLength;
         initializeCells();
@@ -202,7 +199,7 @@ public class Table implements Serializable {
         {
             for (int j = 0; j<cols; j++)
             {
-                if(cells[i][j].getValue() == CellVO.Value.EMPTY)
+                if(cells[i][j].value() == CellVO.Value.EMPTY)
                 {
                     return false;
                 }
@@ -210,9 +207,10 @@ public class Table implements Serializable {
         }
         return true;
     }
+
     public CellVO.Value checkWinner()
     {
-        CellVO.Value w = CellVO.Value.EMPTY;
+        CellVO.Value w; //default empty
 
         w = checkRow();
         if (w != CellVO.Value.EMPTY) return w;
@@ -226,4 +224,36 @@ public class Table implements Serializable {
         w = checkSWDiagonal();
         return w;
     }
+    //segítő method , ellenőrzi hogy a szomszédos mezőben van-e már jel
+    // (row-1,col-1)  (row-1,col)  (row-1,col+1)
+    // (row  ,col-1)  (row  ,col)  (row  ,col+1)
+    // (row+1,col-1)  (row+1,col)  (row+1,col+1)
+    public boolean isConnectedToExisting(int row, int col) {
+        // Ha a cella nem üres, nem használható
+        if (cells[row][col].value() != CellVO.Value.EMPTY) {
+            return false;
+        }
+
+        // Szomszédokon keresztül loop
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                //önmagát kihagy
+                if (i == 0 && j == 0) continue;
+
+                int newRow = row + i;
+                int newCol = col + j;
+
+                // határok
+                if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+                    if (cells[newRow][newCol].value() != CellVO.Value.EMPTY) {
+                        return true;  // talált egy csatlakozót
+                    }
+                }
+            }
+        }
+
+        // Nincs szomszéd ami nem üres
+        return false;
+    }
+
 }

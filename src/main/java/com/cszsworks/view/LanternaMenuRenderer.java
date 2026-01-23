@@ -1,50 +1,65 @@
 package com.cszsworks.view;
 
+import com.cszsworks.util.ThemeManager;
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.input.InputProvider;
+import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.screen.Screen;
 
+import java.util.List;
+
 public class LanternaMenuRenderer {
-    private final Screen screen;
+
+
+    private final MultiWindowTextGUI gui;
+    private BasicWindow window;
+
+    private int selectedIndex = -1;
 
     public LanternaMenuRenderer(Screen screen) {
-        this.screen = screen;
+        //A screen-re húz egy GUI-t
+        this.gui = new MultiWindowTextGUI(screen);
     }
 
-    public void renderMenu(String[] options, int selectedIndex) throws Exception {
-        TerminalSize newSize = screen.doResizeIfNecessary();
-        if (newSize != null) {
-            screen.clear(); //reagálunk az újreméretezésre
-        }
-        screen.clear();
-        TextGraphics g = screen.newTextGraphics();
+    //menu renderelése és a kiválaszott int index visszaadása
+    public int renderMenu(String title, String[] options, int initialSelection) {
+        gui.setTheme(ThemeManager.getTheme()); //az ui-hoz adom a kiválasztott theme-t
+        window = new BasicWindow(title);
+        //setHints : ablakviselkedési metódusok
+        window.setHints(List.of(Window.Hint.CENTERED));
 
-        TerminalSize size = screen.getTerminalSize();
-        int startY = 5;
+        Panel panel = new Panel();
+        //preferred size megengedi az automatikus ujraméretezést később
+        panel.setPreferredSize(new TerminalSize(44, 16));
+        panel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+        //loop ami minden option után hozzáad egy gombot a létrehozott panelhez
         for (int i = 0; i < options.length; i++) {
-            if (i == selectedIndex) {
-                g.setBackgroundColor(TextColor.ANSI.WHITE);
-                g.setForegroundColor(TextColor.ANSI.BLACK);
-            } else {
-                g.setBackgroundColor(TextColor.ANSI.DEFAULT);
-                g.setForegroundColor(TextColor.ANSI.DEFAULT);
+            final int index = i;
+            //gomb neve a listából, és funkcioja függvényként (listener)
+            Button button = new Button(options[i], () -> {
+                selectedIndex = index;
+                window.close();
+            });
+            TerminalSize buttonSize = new TerminalSize(30, 4);
+            button.setPreferredSize(buttonSize);
+            //layout data szerint hozzáad
+            panel.addComponent(button, LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+
+            // restore previously selected item
+            if (i == initialSelection) {
+                window.setFocusedInteractable(button);
             }
-            int x = (size.getColumns() - options[i].length()) / 2;
-            g.putString(x, startY + i, options[i]);
         }
 
-        screen.refresh();
-    }
+        window.setComponent(panel);
 
-    public Screen getScreen() {
-        return screen;
+        gui.addWindowAndWait(window);
+        //visszaad a controllernek egy számot, a kiválaszott menu alapján
+        return selectedIndex;
     }
 
     public void close() {
-        try {
-            screen.stopScreen();
-        } catch (Exception ignored) {}
+        if (window != null) {
+            window.close();
+        }
     }
 }

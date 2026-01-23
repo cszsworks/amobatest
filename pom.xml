@@ -18,12 +18,24 @@
   </properties>
 
   <dependencies>
+      <dependency>
+          <groupId>org.json</groupId>
+          <artifactId>json</artifactId>
+          <version>20251224</version>
+      </dependency>
+      <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>8.0.33</version>
+      </dependency>
+
 
       <dependency>
           <groupId>com.googlecode.lanterna</groupId>
           <artifactId>lanterna</artifactId>
           <version>3.1.2</version>
       </dependency>
+
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -103,6 +115,22 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.14</version>
+          <configuration>
+              <excludes>
+                  <!-- egyenkénti exclude -->
+                  <exclude>com/cszsworks/model/GameConfig.*</exclude>
+                  <exclude>com/cszsworks/model/CellVO.*</exclude>
+                  <exclude>com/cszsworks/util/ThemeManager.*</exclude>
+                  <exclude>com/cszsworks/persistence/HighscoreJson.*</exclude>
+                  <exclude>com/cszsworks/GameLauncher.*</exclude>
+                  <exclude>com/cszsworks/util/WaitForKeyPress.*</exclude>
+                  <exclude>com/cszsworks/saves/GameSaveData.*</exclude>
+                  <!-- teljes package exlude -->
+                  <exclude>com/cszsworks/view/**/*</exclude>
+                  <exclude>com/cszsworks/exception/**/*</exclude>
+                  <exclude>com/persistence/model/**/*</exclude>
+              </excludes>
+          </configuration>
         <executions>
           <execution>
             <goals>

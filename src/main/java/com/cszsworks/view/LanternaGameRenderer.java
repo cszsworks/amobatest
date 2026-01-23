@@ -1,24 +1,17 @@
 package com.cszsworks.view;
 
-import com.cszsworks.controller.game.GameState;
 import com.cszsworks.model.Table;
 import com.cszsworks.model.CellVO;
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.screen.TerminalScreen;
-import com.googlecode.lanterna.terminal.swing.*;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class LanternaGameRenderer {
 
     private final Screen screen;
 
     // swing alapú terminál ablak létrehozáse
-    public LanternaGameRenderer(Screen screen) throws Exception {
+    public LanternaGameRenderer(Screen screen) {
         this.screen = screen;
 
     }
@@ -26,21 +19,27 @@ public class LanternaGameRenderer {
 
     //lanterna renderTable, bemenet table, cursor sor és oszlop poz paraméterekkel
     public void renderTable(Table table, int cursorRow, int cursorCol) {
-        TerminalSize newSize = screen.doResizeIfNecessary();
-        if (newSize != null) {
-            screen.clear(); //reagálunk az újreméretezésre
-        }
-
         screen.clear();
         TextGraphics g = screen.newTextGraphics();
 
-        TerminalSize size = screen.getTerminalSize();
-        int startX = (size.getColumns() - table.getCols() * 4) / 2;
-        int startY = (size.getRows() - table.getRows()) / 2;
+        int cols = table.getCols();
+
+        int startX = (screen.getTerminalSize().getColumns() - table.getCols() * 4) / 2;
+        int startY = (screen.getTerminalSize().getRows() - table.getRows()) / 2;
+
+        for (int j = 0; j < cols; j++) {
+            String colLabel = String.valueOf(j + 1); // 1től kezdje
+            g.putString(startX + j * 4 + 1, startY - 1, colLabel); // +1 for padding
+        }
 
         for (int i = 0; i < table.getRows(); i++) {
+
+            char rowLabel = (char) ('A' + i % 26); // Ez átfordul Z-re ansi kód alapján
+            g.putString(startX - 2, startY + i, String.valueOf(rowLabel));
+
+
             for (int j = 0; j < table.getCols(); j++) {
-                CellVO.Value v = table.getCell(i, j).getValue();
+                CellVO.Value v = table.getCell(i, j).value();
                 String symbol = v == CellVO.Value.EMPTY ? "." : v.toString();
 
                 if (i == cursorRow && j == cursorCol) {
@@ -54,69 +53,26 @@ public class LanternaGameRenderer {
                 g.putString(startX + j * 4, startY + i, " " + symbol + " ");
             }
         }
-
-        try {
-            screen.refresh();
-        } catch (Exception ignored) {}
     }
 
-    public void renderGame(GameState state, Table table, int cursorRow, int cursorCol) {
-        switch (state) {
-            case PLAYING -> renderTable(table, cursorRow, cursorCol);
-            case DRAW -> {
-                renderTable(table,0,0);
-                renderDraw();
-            }
-            case X_WINS -> {
-                renderTable(table,0,0);
-                renderWin(CellVO.Value.X);
-            }
-            case O_WINS -> {
-                renderTable(table,0,0);
-                renderWin(CellVO.Value.O);
-            }
+    public void renderGame(Table table, int cursorRow, int cursorCol, String message) {
+        renderTable(table, cursorRow, cursorCol);
+
+        if (message != null && !message.isEmpty()) {
+            TextGraphics g = screen.newTextGraphics();
+            int row = 0; // felso sor
+            int col = Math.max(0, (screen.getTerminalSize().getColumns() - message.length()) / 2);
+            g.putString(col, row, message);
         }
-    }
-
-    private void renderDraw() {
-        TextGraphics g = screen.newTextGraphics();
-
-        String message = "Draw! Press Enter to return to the main menu";
-
-        TerminalSize size = screen.getTerminalSize();
-        int x = (size.getColumns() - message.length()) / 2;
-        int y = 0;
-
-        g.putString(x, y, message);
 
         try {
             screen.refresh();
         } catch (Exception ignored) {}
     }
 
-    private void renderWin(CellVO.Value winner) {
-        TextGraphics g = screen.newTextGraphics();
-
-        String message = "The winner is: " + winner + " ! Press Enter to return to the main menu";
-
-        TerminalSize size = screen.getTerminalSize();
-        int x = (size.getColumns() - message.length()) / 2;
-        int y = 0;
-
-        g.putString(x, y, message);
-
-        try {
-            screen.refresh();
-        } catch (Exception ignored) {}
-    }
 
     public Screen getScreen() {
         return screen;
     }
 
-    public void close() {
-        try {
-            screen.stopScreen();
-        } catch (Exception ignored) {}
-    }
 }
