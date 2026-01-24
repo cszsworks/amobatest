@@ -86,7 +86,8 @@ public class Table implements Serializable {
 
             //delkelet atlo csekk
     private CellVO.Value checkSEDiagonal() {
-        int size = rows;
+        int size = rows; //sorméret
+        //megkeres minden lehetséges kezdőpontot ahol még elfér a winLength hossz átlóban
         for (int rowStart = 0; rowStart <= size - winLength; rowStart++) {
             for (int colStart = 0; colStart <= size - winLength; colStart++) {
 
@@ -94,21 +95,22 @@ public class Table implements Serializable {
                 CellVO.Value checkAgainst = CellVO.Value.EMPTY;
 
                 for (int k = 0; k < winLength; k++) {
+                    // +k minden esetben, átlósan ugrálunk délkelet felé 1esével
                     CellVO.Value cur = cells[rowStart + k][colStart + k].value();
 
                     if (cur == CellVO.Value.EMPTY) {
-                        break; // nem nyerhet
+                        break; // ha van üres mező nem nyerhet
                     }
 
                     if (cur == checkAgainst) {
-                        sameCount++;
+                        sameCount++; //ha egyezést talál , növeli a samecountoit
                     } else {
-                        checkAgainst = cur;
-                        sameCount = 1;
+                        checkAgainst = cur; //ha nem talál egyezést, reseteli a jelölőt
+                        sameCount = 1; //ha nem talál egyezést, reseteli a samecounto
                     }
 
                     if (sameCount == winLength) {
-                        return checkAgainst;
+                        return checkAgainst; //ha a samecount eléri a nyerési hosszt, visszaadja a nyertes jelet
                     }
                 }
             }
@@ -120,14 +122,15 @@ public class Table implements Serializable {
             //delnyugat atlo csekk
     private CellVO.Value checkSWDiagonal() {
         int size = rows;
-
-
+        //sorméret
+        //megkeres minden lehetséges kezdőpontot ahol még elfér a winLength hossz átlóban
         for (int rowStart = 0; rowStart <= size - winLength; rowStart++) {
             for (int colStart = winLength - 1; colStart < size; colStart++) {
 
                 int sameCount = 0;
-                CellVO.Value checkAgainst = CellVO.Value.EMPTY;
 
+                CellVO.Value checkAgainst = CellVO.Value.EMPTY;
+                // +k és -k minden esetben, átlósan ugrálunk délnyugat felé 1esével
                 for (int k = 0; k < winLength; k++) {
                     CellVO.Value cur = cells[rowStart + k][colStart - k].value();
 
@@ -136,14 +139,15 @@ public class Table implements Serializable {
                     }
 
                     if (cur == checkAgainst) {
+                        //ha egyezést talál , növeli a samecountoit
                         sameCount++;
                     } else {
-                        checkAgainst = cur;
-                        sameCount = 1;
+                        checkAgainst = cur; //ha nem talál egyezést, reseteli a jelölőt
+                        sameCount = 1; //ha nem talál egyezést, reseteli a samecounto
                     }
 
                     if (sameCount == winLength) {
-                        return checkAgainst;
+                        return checkAgainst; //ha a samecount eléri a nyerési hosszt, visszaadja a nyertes jelet
                     }
                 }
             }
@@ -151,7 +155,7 @@ public class Table implements Serializable {
 
         return CellVO.Value.EMPTY;
     }
-    // =============================== //
+    // =============================================== //
 
     public Table(int rows, int cols, int winLength) {
         this.rows = rows;
@@ -160,11 +164,11 @@ public class Table implements Serializable {
         this.winLength = winLength;
         initializeCells();
     }
-
+    //minden cellához új CellVO-t generál
     private void initializeCells() {
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
-                cells[r][c] = new CellVO(r, c);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                cells[i][j] = new CellVO(i, j);
             }
         }
     }
@@ -239,7 +243,7 @@ public class Table implements Serializable {
             for (int j = -1; j <= 1; j++) {
                 //önmagát kihagy
                 if (i == 0 && j == 0) continue;
-
+                //loop helyzeti szerint, 1-el csökkenti , meghagyja 0val, vagy 1el növeli az oszlopot/sort
                 int newRow = row + i;
                 int newCol = col + j;
 

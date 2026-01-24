@@ -47,7 +47,7 @@ public class Game {
 
         String FILE_PATH = "highscores.json";
 
-        // shutdown hook – kilépéskor mentjük az adatbázist
+        // shutdown hook – kilépéskor mentjük az adatbázist, ez JAVA alapú
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("Uploading remaining local highscores to database...");
             JSONToSQL.exportJSONToSQL(FILE_PATH);
@@ -55,12 +55,15 @@ public class Game {
         }));
 
         // induláskor DB → JSON
+        // betölti az adatbázisban tárolt highscore-okat és menti őket
+        // egy helyi JSON fájlba (highscores.json), hogy a játék offline is tudja használni.
         SQLToJSON.exportSQLToJSON(FILE_PATH);
 
+        //alap app state
         AppState appState = AppState.MAIN_MENU;
         int menuSelection = 0;
 
-        // fő ciklus – addig fut, míg EXIT nem lesz
+        // FŐ CIKLUS, Appstate nem exit, addig vált , FŐMENÜ/JATEK/HIGHSCORE/LOAD
         while (appState != AppState.EXIT) {
 
             if (appState == AppState.MAIN_MENU) {
@@ -69,6 +72,8 @@ public class Game {
                         new MainMenuController(menuSelection, menuRenderer);
                 try {
                     appState = controlMenu.startMainMenu();
+                    // visszaadja az új AppState-et a választás alapján
+
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -137,7 +142,7 @@ public class Game {
         }
 
         System.out.println("loop elhagyva");
-
+        //bezárás, felszabadít mindent ami lanterna
         try {
             mainScreen.close();
         } catch (IOException e) {

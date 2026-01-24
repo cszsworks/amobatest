@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+//kezeli a game loopot, eldönti ki következik, figyeli a win állapotot,
+
+//ÖSSZEKÖTI A MODELT és a VIEWT
+
 public class GameController {
 
     private final Table table;
@@ -56,7 +60,7 @@ public class GameController {
 
 
     // --- GAME LOOP ---
-
+    // Addig fut, amíg a játék PLAYING állapotban van
     public AppState gameLoop() throws Exception {
         while (state == GameState.PLAYING) {
 
@@ -64,7 +68,7 @@ public class GameController {
             renderer.renderGame(table, cursorRow, cursorCol, message);
             message = null; //üzenet nullázása, következő hivásnál már üres.
 
-            // wincheck
+            // wincheck, táblábol visszajön
             CellVO.Value winner = table.checkWinner();
             if (winner == CellVO.Value.X) {
                 Highscore winnerScore = new Highscore(config.getPlayerName(), ScoreCalculator.CalculateScore(config));
@@ -78,7 +82,7 @@ public class GameController {
                 state = GameState.DRAW;
                 message = "Draw! Press Enter to return to the main menu";
             }
-
+            //ha már nem PLAYING, kilépünk a loopból
             if (state != GameState.PLAYING) {
                 appState = AppState.MAIN_MENU;
                 break;
@@ -113,10 +117,13 @@ public class GameController {
         if (key == null) return AppState.IN_GAME;
 
         switch (key.getKeyType()) {
+            //kurzorkey alap
             case ArrowUp -> cursorRow = Math.max(0, cursorRow - 1);
             case ArrowDown -> cursorRow = Math.min(table.getRows() - 1, cursorRow + 1);
             case ArrowLeft -> cursorCol = Math.max(0, cursorCol - 1);
             case ArrowRight -> cursorCol = Math.min(table.getCols() - 1, cursorCol + 1);
+
+            //wasd alternativa
             case Character -> {
                 char c = key.getCharacter();
                 if (c == 'w') cursorRow = Math.max(0, cursorRow - 1);
@@ -124,9 +131,11 @@ public class GameController {
                 else if (c == 'a') cursorCol = Math.max(0, cursorCol - 1);
                 else if (c == 'd') cursorCol = Math.min(table.getCols() - 1, cursorCol + 1);
             }
+
+            //lépés menübe vagy vissza
             case Enter -> {
                 if (state != GameState.PLAYING) {
-                    appState = AppState.MAIN_MENU;
+                    appState = AppState.MAIN_MENU; //töri az app loopot
                 } else if (movePossible(cursorRow, cursorCol)) {
                     table.setCell(cursorRow, cursorCol, CellVO.Value.X);
                     config.setPlayerTurn(false);
@@ -137,7 +146,7 @@ public class GameController {
             }
             case Escape, F5 -> {
                 saveGame();
-                return AppState.MAIN_MENU;
+                return AppState.MAIN_MENU; //töri a loopot
             }
             default -> {}
         }
@@ -150,6 +159,7 @@ public class GameController {
 
     private void saveGame() {
         GameSaveData save = new GameSaveData(config, table);
+        //player stringgel csinál fájlt, igy azonosítható
         String filename = config.getPlayerName() + "_save.dat";
         SaveManager.createSave(save, filename);
         System.out.println("Game saved to " + filename);
