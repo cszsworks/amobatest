@@ -5,72 +5,91 @@ import com.cszsworks.model.CellVO;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.screen.Screen;
-
+//tábla, kurzor szinezés, üzenetek, refresh
 public class LanternaGameRenderer {
 
     private final Screen screen;
+    private final CellBorderRenderer cellBorderRenderer;
 
     // swing alapú terminál ablak létrehozáse
     public LanternaGameRenderer(Screen screen) {
         this.screen = screen;
-
+        this.cellBorderRenderer = new CellBorderRenderer();
     }
 
 
-    //lanterna renderTable, bemenet table, cursor sor és oszlop poz paraméterekkel
+    //lanterna renderTable, cellák , keretek kirazjolasa
     public void renderTable(Table table, int cursorRow, int cursorCol) {
         screen.clear();
         TextGraphics g = screen.newTextGraphics();
 
+        int rows = table.getRows();
         int cols = table.getCols();
+        //ez lesz a cella teljes szélesség, borderrel és kerettel
+        int cellBlockWidth = cols * (CellBorderRenderer.CELL_WIDTH + 2) + 1;
 
-        int startX = (screen.getTerminalSize().getColumns() - table.getCols() * 4) / 2;
-        int startY = (screen.getTerminalSize().getRows() - table.getRows()) / 2;
+        //vizszintes középre
+        int startX = (screen.getTerminalSize().getColumns() - cellBlockWidth) / 2;
+        //függőleges középre (soronként 2 magas)
+        int startY = (screen.getTerminalSize().getRows() - rows * 2) / 2;
 
+        // oszlop számozás felül
         for (int j = 0; j < cols; j++) {
-            String colLabel = String.valueOf(j + 1); // 1től kezdje
-            g.putString(startX + j * 4 + 1, startY - 1, colLabel); // +1 for padding
+            g.putString(startX + 2 + j * (CellBorderRenderer.CELL_WIDTH + 2), startY - 2, String.valueOf(j + 1)
+            );
         }
 
-        for (int i = 0; i < table.getRows(); i++) {
+        //felső vizszintes keret
+        cellBorderRenderer.drawHorizontalBorder(g, startX, startY - 1, cols);
 
-            char rowLabel = (char) ('A' + i % 26); // Ez átfordul Z-re ansi kód alapján
-            g.putString(startX - 2, startY + i, String.valueOf(rowLabel));
+        for (int i = 0; i < rows; i++) {
+            //soronkénti betü előre
+            char rowLabel = (char) ('A' + i % 26); //ez loopol ha hosszabb lenne mint 26.. ( nem lesz..)
+            g.putString(startX - 2, startY + i * 2, String.valueOf(rowLabel));
 
+            // CELLÁK RAJZOLÁSA sorokban
+            for (int j = 0; j < cols; j++) {
+                //Cellából kérem a szimbolumot
+                var cell = table.getCell(i, j);
+                //ha üres pont, ha nem üres, a jel
+                String symbol = cell.value() == CellVO.Value.EMPTY ? "." : cell.value().toString();
 
-            for (int j = 0; j < table.getCols(); j++) {
-                CellVO.Value v = table.getCell(i, j).value();
-                String symbol = v == CellVO.Value.EMPTY ? "." : v.toString();
+                boolean selected = (i == cursorRow && j == cursorCol);
 
-                if (i == cursorRow && j == cursorCol) {
-                    g.setBackgroundColor(TextColor.ANSI.WHITE);
-                    g.setForegroundColor(TextColor.ANSI.BLACK);
-                } else {
-                    g.setBackgroundColor(TextColor.ANSI.DEFAULT);
-                    g.setForegroundColor(TextColor.ANSI.DEFAULT);
-                }
+                // erre a koordinátára fog kerülni a cella
+                int cellX = startX + j * (CellBorderRenderer.CELL_WIDTH + 2);
+                int cellY = startY + i * 2;
 
-                g.putString(startX + j * 4, startY + i, " " + symbol + " ");
+                //--------------------CELLAKIRAJZOLÁS
+                cellBorderRenderer.drawCell(g, cellX, cellY, symbol, selected);
+            }
+
+            // HA UTOLSÓ SOR, ALÁ IS KERÜL VONAL
+            if (i == rows - 1) {
+                cellBorderRenderer.drawBottomBorder(g, startX, startY + i * 2 + 1, cols);
             }
         }
     }
-
+    //telejs képernyő : resize, tábla , üzenet ,refreshelés!
     public void renderGame(Table table, int cursorRow, int cursorCol, String message) {
+        screen.doResizeIfNecessary(); //reagál ha újraméretezés történt, de csak refresh callnál
         renderTable(table, cursorRow, cursorCol);
-
+        // Felső üzenet (pl. hiba, győzelem)
         if (message != null && !message.isEmpty()) {
             TextGraphics g = screen.newTextGraphics();
             int row = 0; // felso sor
-            int col = Math.max(0, (screen.getTerminalSize().getColumns() - message.length()) / 2);
+            int col = Math.max(0, (screen.getTerminalSize().getColumns() - message.length()) / 2); //math max h ne legyen akadás
             g.putString(col, row, message);
         }
-
+        //Itt a BUFFER teljes tartalma felkerül a terminálra
         try {
             screen.refresh();
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-
+    //a kontroller tudjon inputot olvasni
     public Screen getScreen() {
         return screen;
     }

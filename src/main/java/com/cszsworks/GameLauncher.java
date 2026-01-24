@@ -9,7 +9,7 @@ import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
 import java.util.Scanner;
 
 public class GameLauncher {
-
+    //player nevet stringbe, témakezelő kiválasztás
     public static void main(String[] args) throws Exception {
 
         // konzolos input ELŐBB, hogy ne blokkolja a GUI-t
@@ -36,10 +36,9 @@ public class GameLauncher {
 
         System.out.println("Hello, " + playerName + "!");
 
-        // --- GUI csak ezután indul ---
+        // GUI indul, Swingterminal a kompatibilitás érdekében
         SwingTerminalFrame terminal = new SwingTerminalFrame(
-                "Amőba",
-                TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode
+                "Amőba", TerminalEmulatorAutoCloseTrigger.CloseOnExitPrivateMode //szükséges egy auto close trigger az induláshoz
         );
 
         terminal.setVisible(true);
@@ -66,6 +65,7 @@ public class GameLauncher {
 
         game.run();
 
+        //ha a game leáll, bezárunk mindent
         screen.close();
         terminal.close();
         System.exit(0);
