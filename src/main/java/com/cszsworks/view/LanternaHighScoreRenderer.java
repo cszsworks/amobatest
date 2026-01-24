@@ -21,7 +21,7 @@ public class LanternaHighScoreRenderer {
         gui.setTheme(ThemeManager.getTheme());
         window = new BasicWindow("High Scores");
 
-        // Main panel with vertical layout
+        // Main panel vertikális layouttal
         Panel mainPanel = new Panel();
         mainPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
         mainPanel.setPreferredSize(new TerminalSize(40, 20));
@@ -30,7 +30,7 @@ public class LanternaHighScoreRenderer {
         mainPanel.addComponent(new Label("Top High Scores")
                 .setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center)));
 
-        // Highscore entries
+        // Highscore bejegyzések
         int rank = 1;
         for (HighScoreDisplayEntry entry : scores) {
             String line = String.format("%2d. %-15s %5d", rank++, entry.getUsername(), entry.getScore());
@@ -39,7 +39,7 @@ public class LanternaHighScoreRenderer {
 
         mainPanel.addComponent(new EmptySpace(new TerminalSize(1, 1)));
 
-        // Close button to return to main menu
+        // Close gomb
         Button closeButton = new Button("Return to Main Menu", () -> window.close());
         mainPanel.addComponent(closeButton.setLayoutData(
                 LinearLayout.createLayoutData(LinearLayout.Alignment.Center)
@@ -48,7 +48,7 @@ public class LanternaHighScoreRenderer {
         window.setComponent(mainPanel);
         window.setHints(java.util.Arrays.asList(Window.Hint.CENTERED));
 
-        // Show window (blocks until closed)
+        // Addig megy mig nem zárom
         gui.addWindowAndWait(window);
     }
 }
